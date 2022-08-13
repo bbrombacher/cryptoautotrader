@@ -3,8 +3,7 @@ CREATE TABLE IF NOT EXISTS users(
     first_name TEXT, 
     last_name TEXT,
     created_at TIMESTAMPTZ default now(),
-    updated_at TIMESTAMPTZ default now(),
-    CONSTRAINT "PK_user_id" PRIMARY KEY ("id")
+    updated_at TIMESTAMPTZ default now()
 );
 
 CREATE TABLE IF NOT EXISTS balance(
@@ -13,8 +12,9 @@ CREATE TABLE IF NOT EXISTS balance(
     currency TEXT,
     amount DECIMAL,
     updated_at TIMESTAMPTZ default now(),
-    CONSTRAINT fk_user
-      FOREIGN KEY(user_id)
+    CONSTRAINT fk_user_id
+        FOREIGN KEY(user_id)
+        REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS trade_sessions(
@@ -26,11 +26,12 @@ CREATE TABLE IF NOT EXISTS trade_sessions(
     ending_balance decimal,
     started_at TIMESTAMPTZ default now(),
     ended_at TIMESTAMPTZ default now(),
-    CONSTRAINT fk_user
+    CONSTRAINT fk_user_id
         FOREIGN KEY(user_id)
+        REFERENCES users(id)
 );
 
-CREATE TALBE IF NOT EXISTS transactions(
+CREATE TABLE IF NOT EXISTS transactions(
     id TEXT PRIMARY KEY,
     trade_session_id TEXT,
     user_id TEXT,
@@ -39,7 +40,10 @@ CREATE TALBE IF NOT EXISTS transactions(
     amount DECIMAL,
     price DECIMAL,
     created_at TIMESTAMPTZ default now(),
-    CONSTRAINT fk_user_id 
+    CONSTRAINT fk_user_id
         FOREIGN KEY(user_id)
+        REFERENCES users(id),
+    CONSTRAINT fk_trade_session_id
         FOREIGN KEY(trade_session_id)
+        REFERENCES trade_sessions(id)    
 );

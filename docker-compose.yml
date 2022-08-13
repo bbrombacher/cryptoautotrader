@@ -10,3 +10,6 @@ services:
       - POSTGRES_USER=pguser
       - POSTGRES_PASSWORD=pgpass 
       - POSTGRES_DB=robot-transact
+
+
+      
