@@ -12,3 +12,5 @@ db.delete:
 	docker rm robot-transactions
 migrate.up:
 	migrate -path migrations -database $(LOCAL_PSQL_URL) -verbose up
+migrate.down:
+	migrate -path migrations -database $(LOCAL_PSQL_URL) -verbose down
