@@ -20,7 +20,7 @@ func main() {
 	}
 
 	defer func() {
-		coinbaseClient.CloseFeed(tickerID)
+		coinbaseClient.CloseTickerFeed(tickerID)
 	}()
 
 	for {

@@ -49,7 +49,7 @@ func (c Client) GetTickerMessages(id string) (map[string]interface{}, error) {
 	return message, nil
 }
 
-func (c Client) CloseFeed(id string) error {
+func (c Client) CloseTickerFeed(id string) error {
 	wsConn, ok := c.tickers[id]
 	if !ok {
 		return errors.New("id does not exist")
