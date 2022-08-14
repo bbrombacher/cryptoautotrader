@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS users(
     id TEXT PRIMARY KEY,
     first_name TEXT, 
     last_name TEXT,
+    cursor_id INT GENERATED ALWAYS AS IDENTITY,
     created_at TIMESTAMPTZ default now(),
     updated_at TIMESTAMPTZ default now()
 );
