@@ -10,7 +10,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
-func (s *sqlClient) SelectUser(ctx context.Context, id string) (*models.UserEntry, error) {
+func (s *SqlClient) SelectUser(ctx context.Context, id string) (*models.UserEntry, error) {
 
 	selectQuery := sq.Select("*").
 		From("users").
@@ -31,7 +31,7 @@ func (s *sqlClient) SelectUser(ctx context.Context, id string) (*models.UserEntr
 	return &result, nil
 }
 
-func (s *sqlClient) InsertUser(ctx context.Context, entry models.UserEntry) (*models.UserEntry, error) {
+func (s *SqlClient) InsertUser(ctx context.Context, entry models.UserEntry) (*models.UserEntry, error) {
 	valueMap, err := entry.RetrieveTagValues("db")
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (s *sqlClient) InsertUser(ctx context.Context, entry models.UserEntry) (*mo
 	return &result, nil
 }
 
-func (s *sqlClient) UpdateUser(ctx context.Context, entry models.UserEntry, updateColumns []string) (*models.UserEntry, error) {
+func (s *SqlClient) UpdateUser(ctx context.Context, entry models.UserEntry, updateColumns []string) (*models.UserEntry, error) {
 	valueMap, err := entry.RetrieveTagValues("db")
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (s *sqlClient) UpdateUser(ctx context.Context, entry models.UserEntry, upda
 	return &result, nil
 }
 
-func (s *sqlClient) DeleteUser(ctx context.Context, id string) error {
+func (s *SqlClient) DeleteUser(ctx context.Context, id string) error {
 
 	query := sq.Delete("users").Where(sq.Eq{"id": id})
 	sql, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()

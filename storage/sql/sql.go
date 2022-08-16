@@ -1,20 +1,28 @@
 package sql
 
+//go:generate mockgen -source=sql.go -destination=../../mocks/storage/sql.go -package=mocksql github.com/bbrombacher/cryptoautotrader/storage/sql
+
 import (
+	"bbrombacher/cryptoautotrader/storage/models"
 	"context"
 
 	"github.com/jmoiron/sqlx"
 )
 
-type SQLClient interface{}
+type SQLClient interface {
+	SelectUser(ctx context.Context, id string) (*models.UserEntry, error)
+	InsertUser(ctx context.Context, entry models.UserEntry) (*models.UserEntry, error)
+	UpdateUser(ctx context.Context, entry models.UserEntry, updateColumns []string) (*models.UserEntry, error)
+	DeleteUser(ctx context.Context, id string) error
+}
 
-type sqlClient struct {
+type SqlClient struct {
 	db *sqlx.DB
 }
 
-func NewSQLClient(ctx context.Context, db *sqlx.DB) (*sqlClient, error) {
+func NewSQLClient(ctx context.Context, db *sqlx.DB) (*SqlClient, error) {
 	if err := db.PingContext(ctx); err != nil {
 		return nil, err
 	}
-	return &sqlClient{db: db}, nil
+	return &SqlClient{db: db}, nil
 }
