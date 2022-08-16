@@ -3,7 +3,10 @@ package sql
 import (
 	"bbrombacher/cryptoautotrader/storage/models"
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 )
@@ -22,6 +25,39 @@ func (s *sqlClient) InsertUser(ctx context.Context, entry models.UserEntry) (*mo
 
 	var result models.UserEntry
 	if err := s.db.GetContext(ctx, &result, sql, args...); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (s *sqlClient) UpdateUser(ctx context.Context, entry models.UserEntry, updateColumns []string) (*models.UserEntry, error) {
+	valueMap, err := entry.RetrieveTagValues("db")
+	if err != nil {
+		return nil, err
+	}
+
+	updateQuery := sq.Update("users").
+		Where(sq.Eq{"id": entry.ID}).
+		Set("updated_at", time.Now()).
+		Suffix("RETURNING *")
+
+	for _, tag := range updateColumns {
+		if val, ok := valueMap[tag]; ok {
+			updateQuery = updateQuery.Set(tag, val)
+		}
+	}
+
+	updateSql, updateArgs, err := updateQuery.PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var result models.UserEntry
+	if err = s.db.GetContext(ctx, &result, updateSql, updateArgs...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf("user does not exist")
+		}
 		return nil, err
 	}
 

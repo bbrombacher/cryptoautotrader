@@ -44,6 +44,42 @@ func TestSQLClient_InsertUser(t *testing.T) {
 	assert.Equal(t, expectedResult.CursorID, result.CursorID)
 }
 
+func TestSQLClient_UpdateUser(t *testing.T) {
+	userTestCleanup()
+	defer userTestCleanup()
+
+	if _, err := validDb.Exec(`
+		INSERT INTO users (
+			id,
+			first_name,
+			last_name
+		)
+		VALUES 
+			('one', 'brandon', 'brombacher');
+	`); err != nil {
+		log.Fatal("could not seed test db ", err)
+	}
+
+	// setup db
+	sqlClient, err := sql.NewSQLClient(context.Background(), validDb)
+	assert.Nil(t, err)
+
+	newEntry := models.UserEntry{
+		ID:        "one",
+		FirstName: "not brandon",
+		LastName:  "brombacher",
+	}
+
+	updateColumns := []string{"first_name", "last_name"}
+
+	// insert entry
+	result, err := sqlClient.UpdateUser(context.Background(), newEntry, updateColumns)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "not brandon", result.FirstName)
+	assert.Equal(t, "brombacher", result.LastName)
+}
+
 func TestSQLClient_DeleteUser(t *testing.T) {
 	userTestCleanup()
 	defer userTestCleanup()
