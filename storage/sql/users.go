@@ -5,11 +5,31 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
 )
+
+func (s *sqlClient) SelectUser(ctx context.Context, id string) (*models.UserEntry, error) {
+
+	selectQuery := sq.Select("*").
+		From("users").
+		Where(sq.Eq{"id": id})
+	sqlQuery, args, err := selectQuery.PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var result models.UserEntry
+	if err = s.db.GetContext(ctx, &result, sqlQuery, args...); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, models.ErrUserDoesNotExist
+		}
+		return nil, err
+	}
+
+	return &result, nil
+}
 
 func (s *sqlClient) InsertUser(ctx context.Context, entry models.UserEntry) (*models.UserEntry, error) {
 	valueMap, err := entry.RetrieveTagValues("db")
@@ -56,7 +76,7 @@ func (s *sqlClient) UpdateUser(ctx context.Context, entry models.UserEntry, upda
 	var result models.UserEntry
 	if err = s.db.GetContext(ctx, &result, updateSql, updateArgs...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, fmt.Errorf("user does not exist")
+			return nil, models.ErrUserDoesNotExist
 		}
 		return nil, err
 	}
@@ -78,7 +98,7 @@ func (s *sqlClient) DeleteUser(ctx context.Context, id string) error {
 	}
 
 	if rows, _ := sqlResult.RowsAffected(); rows == 0 {
-		return fmt.Errorf("user does not exist")
+		return models.ErrUserDoesNotExist
 	}
 
 	return nil

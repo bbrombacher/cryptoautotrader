@@ -1,9 +1,14 @@
 package models
 
 import (
+	"errors"
 	"time"
 
 	jsoninter "github.com/json-iterator/go"
+)
+
+var (
+	ErrUserDoesNotExist = errors.New("user does not exist")
 )
 
 type UserEntry struct {
