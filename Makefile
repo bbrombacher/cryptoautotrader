@@ -4,13 +4,20 @@ db.setup:
 	docker-compose up -d db
 	sleep 5
 	make migrate.up
+
 db.reset:
 	make db.delete
 	make db.setup
+
 db.delete:
 	docker stop robot-transactions
 	docker rm robot-transactions
+
 migrate.up:
 	migrate -path migrations -database $(LOCAL_PSQL_URL) -verbose up
+
 migrate.down:
 	migrate -path migrations -database $(LOCAL_PSQL_URL) -verbose down
+
+mocks:
+	go generate ./...
