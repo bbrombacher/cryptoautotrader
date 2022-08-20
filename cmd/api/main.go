@@ -1,0 +1,42 @@
+package main
+
+import (
+	users "bbrombacher/cryptoautotrader/controllers/users"
+	"bbrombacher/cryptoautotrader/storage"
+	"bbrombacher/cryptoautotrader/storage/sql"
+	"context"
+	goSql "database/sql"
+	"log"
+	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
+)
+
+func main() {
+	// set up db
+	sqldb, err := goSql.Open(
+		"postgres",
+		"postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable",
+	)
+	if err != nil {
+		log.Fatal("error opening sql", err.Error())
+	}
+	db := sqlx.NewDb(sqldb, "postgres")
+	sqlClient, err := sql.NewSQLClient(context.Background(), db)
+	if err != nil {
+		log.Fatal("could not start sql client: ", err.Error())
+	}
+	storageClient := storage.NewStorageClient(sqlClient)
+
+	// setup controllers
+	userController := users.Controller{
+		StorageClient: storageClient,
+	}
+
+	// setup router
+	r := mux.NewRouter()
+	userController.Register(r)
+	http.ListenAndServe(":8080", r)
+}
