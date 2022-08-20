@@ -8,7 +8,6 @@ import (
 	"bbrombacher/cryptoautotrader/transforms"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -65,8 +64,6 @@ func (c Controller) CreateUser() http.HandlerFunc {
 		if err != nil {
 			ErrResponse(w, http.StatusBadRequest, "could not unmarshal request body")
 		}
-
-		log.Printf("REQ %#v", req)
 
 		err = req.Validate()
 		if err != nil {
