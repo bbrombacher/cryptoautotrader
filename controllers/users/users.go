@@ -15,8 +15,18 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	r.HandleFunc("/users/{id}", c.GetUser())
+	r.HandleFunc("/users/{id}", c.GetUser()).Methods("GET")
+	r.HandleFunc("/users", c.GetUser()).Methods("POST")
 	return r
+}
+
+func ErrResponse(w http.ResponseWriter, statusCode int, message string) {
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(ErrorResponse{
+		Error: ErrorMessage{
+			Message: "could not find",
+		},
+	})
 }
 
 func (c Controller) GetUser() http.HandlerFunc {
@@ -27,19 +37,15 @@ func (c Controller) GetUser() http.HandlerFunc {
 		userEntry, err := c.StorageClient.GetUser(r.Context(), id)
 		if err != nil {
 			if errors.Is(err, models.ErrUserDoesNotExist) {
-				http.Error(w, "could not find user", http.StatusNotFound)
+				ErrResponse(w, http.StatusNotFound, "could not find user")
+				return
 			}
-			http.Error(w, "an unexpected error occurred", http.StatusInternalServerError)
-			return
-		}
-
-		err = json.NewEncoder(w).Encode(userEntry)
-		if err != nil {
-			http.Error(w, "failed to marshal", http.StatusInternalServerError)
+			ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(userEntry)
 	}
 }
 
