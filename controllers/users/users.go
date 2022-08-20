@@ -2,6 +2,7 @@ package users
 
 import (
 	userRequest "bbrombacher/cryptoautotrader/controllers/users/request"
+	userResponse "bbrombacher/cryptoautotrader/controllers/users/response"
 	"bbrombacher/cryptoautotrader/models"
 	"bbrombacher/cryptoautotrader/storage"
 	storageModels "bbrombacher/cryptoautotrader/storage/models"
@@ -51,8 +52,12 @@ func (c Controller) GetUser() http.HandlerFunc {
 			return
 		}
 
+		resp := userResponse.GetUserResponse{
+			User: userEntry,
+		}
+
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(userEntry)
+		json.NewEncoder(w).Encode(resp)
 	}
 }
 
