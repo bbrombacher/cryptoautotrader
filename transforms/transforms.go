@@ -1,6 +1,10 @@
 package transforms
 
-import "bbrombacher/cryptoautotrader/coinbase"
+import (
+	"bbrombacher/cryptoautotrader/coinbase"
+	userRequest "bbrombacher/cryptoautotrader/controllers/users/request"
+	storageModels "bbrombacher/cryptoautotrader/storage/models"
+)
 
 func BuildStartTickerParams(productIDs []string) coinbase.StartTickerParams {
 	return coinbase.StartTickerParams{
@@ -12,5 +16,12 @@ func BuildStartTickerParams(productIDs []string) coinbase.StartTickerParams {
 				ProductIDs: productIDs,
 			},
 		},
+	}
+}
+
+func BuildUserEntryFromPostRequest(request userRequest.PostUserRequest) storageModels.UserEntry {
+	return storageModels.UserEntry{
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
 	}
 }

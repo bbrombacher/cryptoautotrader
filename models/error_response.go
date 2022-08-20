@@ -1,4 +1,4 @@
-package users
+package models
 
 import "bbrombacher/cryptoautotrader/storage/models"
 
