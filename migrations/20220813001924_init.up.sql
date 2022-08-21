@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS trade_sessions(
     currency TEXT,
     starting_balance decimal,
     ending_balance decimal,
+    cursor_id INT GENERATED ALWAYS AS IDENTITY,
     started_at TIMESTAMPTZ default now(),
     ended_at TIMESTAMPTZ default now(),
     CONSTRAINT fk_user_id
@@ -40,6 +41,7 @@ CREATE TABLE IF NOT EXISTS transactions(
     transaction_type TEXT,
     amount DECIMAL,
     price DECIMAL,
+    cursor_id INT GENERATED ALWAYS AS IDENTITY,
     created_at TIMESTAMPTZ default now(),
     CONSTRAINT fk_user_id
         FOREIGN KEY(user_id)
