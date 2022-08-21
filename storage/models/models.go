@@ -13,8 +13,8 @@ var (
 
 type UserEntry struct {
 	ID        string `db:"id" json:"id"`
-	FirstName string `db:"first_name" json:"first_name"`
-	LastName  string `db:"last_name" json:"last_name"`
+	FirstName string `db:"first_name,omitempty" json:"first_name"`
+	LastName  string `db:"last_name,omitempty" json:"last_name"`
 
 	CursorID  int        `db:"cursor_id,omitempty" json:"cursor_id"`
 	CreatedAt *time.Time `db:"created_at,omitempty" json:"created_at"`

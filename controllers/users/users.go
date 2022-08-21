@@ -19,9 +19,13 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	r.HandleFunc("/users/{id}", c.GetUser()).Methods("GET")
-	r.HandleFunc("/users", c.CreateUser()).Methods("POST")
-	return r
+	v1Router := r.PathPrefix("/v1").Subrouter()
+
+	v1Router.HandleFunc("/users/{id}", c.GetUser()).Methods(http.MethodGet)
+	v1Router.HandleFunc("/users", c.CreateUser()).Methods(http.MethodPost)
+	v1Router.HandleFunc("/users/{id}", c.DeleteUser()).Methods(http.MethodDelete)
+	v1Router.HandleFunc("/users/{id}", c.UpdateUser()).Methods(http.MethodPatch)
+	return v1Router
 }
 
 func ErrResponse(w http.ResponseWriter, statusCode int, message string) {
@@ -83,17 +87,54 @@ func (c Controller) CreateUser() http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(newUserEntry)
+		resp := userResponse.CreateUserResponse{
+			User: newUserEntry,
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(resp)
 	}
 }
 
 func (c Controller) UpdateUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		var req userRequest.PatchUserRequest
+		err := req.ParseRequest(r)
+		if err != nil {
+			ErrResponse(w, http.StatusBadRequest, "failed to parse request")
+		}
+
+		entry := transforms.BuildUserEntryFromPatchRequest(req)
+		updatedEntry, err := c.StorageClient.UpdateUser(r.Context(), entry, req.SuppliedFields.Array())
+		if err != nil {
+			ErrResponse(w, http.StatusInternalServerError, "failed to update the user")
+		}
+
+		resp := userResponse.PatchUserResponse{
+			User: updatedEntry,
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(resp)
 	}
 }
 
 func (c Controller) DeleteUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id := vars["id"]
+		if id == "" {
+			ErrResponse(w, http.StatusBadRequest, "you must provide a user id")
+			return
+		}
+
+		err := c.StorageClient.DeleteUser(r.Context(), id)
+		if err != nil {
+			ErrResponse(w, http.StatusInternalServerError, "failed to delete the user")
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
 	}
 }

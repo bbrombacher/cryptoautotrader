@@ -25,3 +25,19 @@ func BuildUserEntryFromPostRequest(request userRequest.PostUserRequest) storageM
 		LastName:  request.LastName,
 	}
 }
+
+func BuildUserEntryFromPatchRequest(request userRequest.PatchUserRequest) storageModels.UserEntry {
+	return storageModels.UserEntry{
+		ID:        request.ID,
+		FirstName: safeDereferenceString(request.FirstName),
+		LastName:  safeDereferenceString(request.LastName),
+	}
+}
+
+func safeDereferenceString(input *string) string {
+	var output string
+	if input != nil {
+		output = *input
+	}
+	return output
+}
