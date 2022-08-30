@@ -37,7 +37,7 @@ func (e *UserEntry) RetrieveTagValues(tag string) (map[string]interface{}, error
 
 type CurrencyEntry struct {
 	ID          string `db:"id" json:"id"`
-	Name        string `db:"name" json:"name"`
+	Name        string `db:"name,omitempty" json:"name"`
 	Description string `db:"description,omitempty" json:"description"`
 
 	CursorID  int        `db:"cursor_id,omitempty" json:"cursor_id"`

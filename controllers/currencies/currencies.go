@@ -1,8 +1,8 @@
-package users
+package currencies
 
 import (
-	userRequest "bbrombacher/cryptoautotrader/controllers/users/request"
-	userResponse "bbrombacher/cryptoautotrader/controllers/users/response"
+	currencyRequest "bbrombacher/cryptoautotrader/controllers/currencies/request"
+	currencyResponse "bbrombacher/cryptoautotrader/controllers/currencies/response"
 	"bbrombacher/cryptoautotrader/models"
 	"bbrombacher/cryptoautotrader/storage"
 	storageModels "bbrombacher/cryptoautotrader/storage/models"
@@ -21,10 +21,10 @@ type Controller struct {
 func (c Controller) Register(r *mux.Router) *mux.Router {
 	v1Router := r.PathPrefix("/v1").Subrouter()
 
-	v1Router.HandleFunc("/users/{id}", c.GetUser()).Methods(http.MethodGet)
-	v1Router.HandleFunc("/users", c.CreateUser()).Methods(http.MethodPost)
-	v1Router.HandleFunc("/users/{id}", c.DeleteUser()).Methods(http.MethodDelete)
-	v1Router.HandleFunc("/users/{id}", c.UpdateUser()).Methods(http.MethodPatch)
+	v1Router.HandleFunc("/currencies/{id}", c.GetCurrency()).Methods(http.MethodGet)
+	v1Router.HandleFunc("/currencies", c.CreateCurrency()).Methods(http.MethodPost)
+	v1Router.HandleFunc("/currencies/{id}", c.DeleteCurrency()).Methods(http.MethodDelete)
+	v1Router.HandleFunc("/currencies/{id}", c.UpdateCurrency()).Methods(http.MethodPatch)
 	return v1Router
 }
 
@@ -37,27 +37,27 @@ func ErrResponse(w http.ResponseWriter, statusCode int, message string) {
 	})
 }
 
-func (c Controller) GetUser() http.HandlerFunc {
+func (c Controller) GetCurrency() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id := vars["id"]
 		if id == "" {
-			ErrResponse(w, http.StatusBadRequest, "you must provide a user id")
+			ErrResponse(w, http.StatusBadRequest, "you must provide a currency id")
 			return
 		}
 
-		userEntry, err := c.StorageClient.GetUser(r.Context(), id)
+		currencyEntry, err := c.StorageClient.GetCurrency(r.Context(), id)
 		if err != nil {
-			if errors.Is(err, storageModels.ErrUserDoesNotExist) {
-				ErrResponse(w, http.StatusNotFound, "could not find user")
+			if errors.Is(err, storageModels.ErrCurrencyDoesNotExist) {
+				ErrResponse(w, http.StatusNotFound, "could not find currency")
 				return
 			}
 			ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
 			return
 		}
 
-		resp := userResponse.GetUserResponse{
-			User: userEntry,
+		resp := currencyResponse.GetCurrencyResponse{
+			Currency: currencyEntry,
 		}
 
 		w.WriteHeader(http.StatusOK)
@@ -65,9 +65,9 @@ func (c Controller) GetUser() http.HandlerFunc {
 	}
 }
 
-func (c Controller) CreateUser() http.HandlerFunc {
+func (c Controller) CreateCurrency() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req userRequest.PostUserRequest
+		var req currencyRequest.PostCurrencyRequest
 
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
@@ -81,15 +81,15 @@ func (c Controller) CreateUser() http.HandlerFunc {
 			return
 		}
 
-		userEntry := transforms.BuildUserEntryFromPostRequest(req)
-		newUserEntry, err := c.StorageClient.CreateUser(r.Context(), userEntry)
+		currencyEntry := transforms.BuildCurrencyEntryFromPostRequest(req)
+		newCurrencyEntry, err := c.StorageClient.CreateCurrency(r.Context(), currencyEntry)
 		if err != nil {
 			ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
 			return
 		}
 
-		resp := userResponse.CreateUserResponse{
-			User: newUserEntry,
+		resp := currencyResponse.CreateCurrencyResponse{
+			Currency: newCurrencyEntry,
 		}
 
 		w.WriteHeader(http.StatusCreated)
@@ -97,25 +97,25 @@ func (c Controller) CreateUser() http.HandlerFunc {
 	}
 }
 
-func (c Controller) UpdateUser() http.HandlerFunc {
+func (c Controller) UpdateCurrency() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		var req userRequest.PatchUserRequest
+		var req currencyRequest.PatchCurrencyRequest
 		err := req.ParseRequest(r)
 		if err != nil {
 			ErrResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
 
-		entry := transforms.BuildUserEntryFromPatchRequest(req)
-		updatedEntry, err := c.StorageClient.UpdateUser(r.Context(), entry, req.SuppliedFields.Array())
+		entry := transforms.BuildCurrencyEntryFromPatchRequest(req)
+		updatedEntry, err := c.StorageClient.UpdateCurrency(r.Context(), entry, req.SuppliedFields.Array())
 		if err != nil {
-			ErrResponse(w, http.StatusInternalServerError, "failed to update the user")
+			ErrResponse(w, http.StatusInternalServerError, "failed to update the currency")
 			return
 		}
 
-		resp := userResponse.PatchUserResponse{
-			User: updatedEntry,
+		resp := currencyResponse.PatchCurrencyResponse{
+			Currency: updatedEntry,
 		}
 
 		w.WriteHeader(http.StatusOK)
@@ -123,18 +123,18 @@ func (c Controller) UpdateUser() http.HandlerFunc {
 	}
 }
 
-func (c Controller) DeleteUser() http.HandlerFunc {
+func (c Controller) DeleteCurrency() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id := vars["id"]
 		if id == "" {
-			ErrResponse(w, http.StatusBadRequest, "you must provide a user id")
+			ErrResponse(w, http.StatusBadRequest, "you must provide a currency id")
 			return
 		}
 
-		err := c.StorageClient.DeleteUser(r.Context(), id)
+		err := c.StorageClient.DeleteCurrency(r.Context(), id)
 		if err != nil {
-			ErrResponse(w, http.StatusInternalServerError, "failed to delete the user")
+			ErrResponse(w, http.StatusInternalServerError, "failed to delete the currency")
 			return
 		}
 

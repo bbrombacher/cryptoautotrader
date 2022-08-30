@@ -72,6 +72,7 @@ func (s *SqlClient) InsertCurrency(ctx context.Context, entry models.CurrencyEnt
 
 	var result models.CurrencyEntry
 	if err := s.db.GetContext(ctx, &result, sql, args...); err != nil {
+		// TODO: find error code to check if unique key already exists
 		return nil, err
 	}
 

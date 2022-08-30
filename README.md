@@ -5,9 +5,7 @@ postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable
 
 TODO:
 - Currencies
-- - Insert, Update, Delete, Get SQL functions
-- - Insert, Update, Delete, Get storage functions
-- - Add balance, Get balance API
+- - Make get all currencies API
 
 - Balance
 - - Insert, Update, Get SQL functions
