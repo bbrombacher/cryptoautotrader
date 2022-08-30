@@ -19,3 +19,10 @@ func BuildCurrencyEntryFromPatchRequest(request currencyRequest.PatchCurrencyReq
 		Description: safeDereferenceString(request.Description),
 	}
 }
+
+func BuildGetCurrenciesParamsFromGetCurrenciesRequest(request currencyRequest.GetCurrenciesRequest) storageModels.GetCurrenciesParams {
+	return storageModels.GetCurrenciesParams{
+		Cursor: request.Cursor,
+		Limit:  request.Limit,
+	}
+}

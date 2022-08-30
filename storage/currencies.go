@@ -14,7 +14,7 @@ func (s *StorageClient) GetCurrency(ctx context.Context, id string) (*models.Cur
 	return entry, nil
 }
 
-func (s *StorageClient) GetCurrencies(ctx context.Context, params models.SelectCurrenciesParams) ([]models.CurrencyEntry, error) {
+func (s *StorageClient) GetCurrencies(ctx context.Context, params models.GetCurrenciesParams) ([]models.CurrencyEntry, error) {
 	entry, err := s.SqlClient.SelectCurrencies(ctx, params)
 	if err != nil {
 		return nil, err

@@ -58,7 +58,7 @@ func (e *CurrencyEntry) RetrieveTagValues(tag string) (map[string]interface{}, e
 	return tagMap, nil
 }
 
-type SelectCurrenciesParams struct {
+type GetCurrenciesParams struct {
 	Cursor int
 	Limit  int
 }

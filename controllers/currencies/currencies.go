@@ -23,9 +23,36 @@ func (c Controller) Register(r *mux.Router) *mux.Router {
 
 	v1Router.HandleFunc("/currencies/{id}", c.GetCurrency()).Methods(http.MethodGet)
 	v1Router.HandleFunc("/currencies", c.CreateCurrency()).Methods(http.MethodPost)
+	v1Router.HandleFunc("/currencies", c.GetCurrencies()).Methods(http.MethodGet)
 	v1Router.HandleFunc("/currencies/{id}", c.DeleteCurrency()).Methods(http.MethodDelete)
 	v1Router.HandleFunc("/currencies/{id}", c.UpdateCurrency()).Methods(http.MethodPatch)
 	return v1Router
+}
+
+func (c Controller) GetCurrencies() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var req currencyRequest.GetCurrenciesRequest
+		err := req.ParseRequest(r)
+		if err != nil {
+			helpers.ErrResponse(w, http.StatusUnprocessableEntity, "error parsing request query parameters")
+			return
+		}
+
+		params := transforms.BuildGetCurrenciesParamsFromGetCurrenciesRequest(req)
+		entries, err := c.StorageClient.GetCurrencies(r.Context(), params)
+		if err != nil {
+			helpers.ErrResponse(w, http.StatusInternalServerError, "error getting currencies")
+			return
+		}
+
+		resp := currencyResponse.GetCurrenciesResponse{
+			Currencies: entries,
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(resp)
+	}
 }
 
 func (c Controller) GetCurrency() http.HandlerFunc {

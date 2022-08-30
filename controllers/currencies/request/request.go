@@ -23,6 +23,26 @@ func init() {
 	decoder.IgnoreUnknownKeys(true)
 }
 
+type GetCurrenciesRequest struct {
+	Limit  int
+	Cursor int
+}
+
+func (r *GetCurrenciesRequest) ParseRequest(request *http.Request) error {
+
+	err := request.ParseForm()
+	if err != nil {
+		return errors.New("error parsing query parameters")
+	}
+
+	err = decoder.Decode(r, request.Form)
+	if err != nil {
+		return errors.New("error parsing query parameters")
+	}
+
+	return nil
+}
+
 type PostCurrencyRequest struct {
 	Name        string `json:"name" validate:"required"`
 	Description string `json:"description" validate:"required"`

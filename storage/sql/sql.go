@@ -15,7 +15,7 @@ type SQLClient interface {
 	UpdateUser(ctx context.Context, entry models.UserEntry, updateColumns []string) (*models.UserEntry, error)
 	DeleteUser(ctx context.Context, id string) error
 
-	SelectCurrencies(ctx context.Context, params models.SelectCurrenciesParams) ([]models.CurrencyEntry, error)
+	SelectCurrencies(ctx context.Context, params models.GetCurrenciesParams) ([]models.CurrencyEntry, error)
 	SelectCurrency(ctx context.Context, id string) (*models.CurrencyEntry, error)
 	InsertCurrency(ctx context.Context, entry models.CurrencyEntry) (*models.CurrencyEntry, error)
 	UpdateCurrency(ctx context.Context, entry models.CurrencyEntry, updateColumns []string) (*models.CurrencyEntry, error)

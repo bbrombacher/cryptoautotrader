@@ -94,7 +94,7 @@ func (mr *MockSQLClientMockRecorder) InsertUser(ctx, entry interface{}) *gomock.
 }
 
 // SelectCurrencies mocks base method.
-func (m *MockSQLClient) SelectCurrencies(ctx context.Context, params models.SelectCurrenciesParams) ([]models.CurrencyEntry, error) {
+func (m *MockSQLClient) SelectCurrencies(ctx context.Context, params models.GetCurrenciesParams) ([]models.CurrencyEntry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SelectCurrencies", ctx, params)
 	ret0, _ := ret[0].([]models.CurrencyEntry)

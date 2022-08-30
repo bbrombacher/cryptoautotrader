@@ -59,7 +59,7 @@ func TestSQLClient_SelectCurrencies(t *testing.T) {
 	sqlClient, err := sql.NewSQLClient(context.Background(), validDb)
 	assert.Nil(t, err)
 
-	params := models.SelectCurrenciesParams{}
+	params := models.GetCurrenciesParams{}
 	result, err := sqlClient.SelectCurrencies(context.Background(), params)
 	assert.Nil(t, err)
 

@@ -31,7 +31,7 @@ func (s *SqlClient) SelectCurrency(ctx context.Context, id string) (*models.Curr
 	return &result, nil
 }
 
-func (s *SqlClient) SelectCurrencies(ctx context.Context, params models.SelectCurrenciesParams) ([]models.CurrencyEntry, error) {
+func (s *SqlClient) SelectCurrencies(ctx context.Context, params models.GetCurrenciesParams) ([]models.CurrencyEntry, error) {
 
 	var limit int
 	if params.Limit == 0 {
