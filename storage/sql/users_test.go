@@ -12,8 +12,8 @@ import (
 )
 
 func TestSQLClient_SelectUser(t *testing.T) {
-	userTestCleanup()
-	defer userTestCleanup()
+	testCleanup()
+	defer testCleanup()
 
 	if _, err := validDb.Exec(`
 		INSERT INTO users (
@@ -39,8 +39,8 @@ func TestSQLClient_SelectUser(t *testing.T) {
 }
 
 func TestSQLClient_InsertUser(t *testing.T) {
-	userTestCleanup()
-	defer userTestCleanup()
+	testCleanup()
+	defer testCleanup()
 
 	// setup db
 	sqlClient, err := sql.NewSQLClient(context.Background(), validDb)
@@ -72,8 +72,8 @@ func TestSQLClient_InsertUser(t *testing.T) {
 }
 
 func TestSQLClient_UpdateUser(t *testing.T) {
-	userTestCleanup()
-	defer userTestCleanup()
+	testCleanup()
+	defer testCleanup()
 
 	if _, err := validDb.Exec(`
 		INSERT INTO users (
@@ -108,8 +108,8 @@ func TestSQLClient_UpdateUser(t *testing.T) {
 }
 
 func TestSQLClient_DeleteUser(t *testing.T) {
-	userTestCleanup()
-	defer userTestCleanup()
+	testCleanup()
+	defer testCleanup()
 
 	if _, err := validDb.Exec(`
 		INSERT INTO users (

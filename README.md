@@ -4,6 +4,16 @@ auto trader bot beep boop beep
 postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable
 
 TODO:
+- Currencies
+- - Insert, Update, Delete, Get SQL functions
+- - Insert, Update, Delete, Get storage functions
+- - Add balance, Get balance API
+
+- Balance
+- - Insert, Update, Get SQL functions
+- - Insert, Update, Get storage functions
+- - Add balance, Get balance API
+
 - Transactions
 - - Insert and Update SQL functions
 - - Insert and Update storage functions

@@ -19,12 +19,20 @@ func GetTestDB() *sqlx.DB {
 	return db
 }
 
-func userTestCleanup() {
+func testCleanup() {
 	if _, err := validDb.Exec("DELETE FROM users"); err != nil {
 		log.Fatal("could not clear test db")
 	}
 
 	if _, err := validDb.Exec(`ALTER TABLE users ALTER COLUMN cursor_id RESTART SET START 1`); err != nil {
+		log.Fatal("could not reset curosr_id sequence")
+	}
+
+	if _, err := validDb.Exec("DELETE FROM currencies"); err != nil {
+		log.Fatal("could not clear test db")
+	}
+
+	if _, err := validDb.Exec(`ALTER TABLE currencies ALTER COLUMN cursor_id RESTART SET START 1`); err != nil {
 		log.Fatal("could not reset curosr_id sequence")
 	}
 }

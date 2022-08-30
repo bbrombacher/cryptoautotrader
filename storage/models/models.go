@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	ErrUserDoesNotExist = errors.New("user does not exist")
+	ErrUserDoesNotExist     = errors.New("user does not exist")
+	ErrCurrencyDoesNotExist = errors.New("currency does not exist")
 )
 
 type UserEntry struct {
@@ -32,4 +33,32 @@ func (e *UserEntry) RetrieveTagValues(tag string) (map[string]interface{}, error
 		return nil, err
 	}
 	return tagMap, nil
+}
+
+type CurrencyEntry struct {
+	ID          string `db:"id" json:"id"`
+	Name        string `db:"name" json:"name"`
+	Description string `db:"description,omitempty" json:"description"`
+
+	CursorID  int        `db:"cursor_id,omitempty" json:"cursor_id"`
+	CreatedAt *time.Time `db:"created_at,omitempty" json:"created_at"`
+	UpdatedAt *time.Time `db:"updated_at,omitempty" json:"updated_at"`
+}
+
+func (e *CurrencyEntry) RetrieveTagValues(tag string) (map[string]interface{}, error) {
+	tagMap := map[string]interface{}{}
+	var rjson = jsoninter.Config{TagKey: tag}.Froze()
+	data, err := rjson.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	if err := rjson.Unmarshal(data, &tagMap); err != nil {
+		return nil, err
+	}
+	return tagMap, nil
+}
+
+type SelectCurrenciesParams struct {
+	Cursor int
+	Limit  int
 }

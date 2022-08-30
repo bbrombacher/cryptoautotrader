@@ -7,15 +7,27 @@ CREATE TABLE IF NOT EXISTS users(
     updated_at TIMESTAMPTZ default now()
 );
 
+CREATE TABLE IF NOT EXISTS currencies(
+    id TEXT PRIMARY KEY,
+    name text NOT NULL UNIQUE,
+    description TEXT,
+    cursor_id INT GENERATED ALWAYS AS IDENTITY,
+    created_at TIMESTAMPTZ default now(),
+    updated_at TIMESTAMPTZ default now()
+);
+
 CREATE TABLE IF NOT EXISTS balance(
     id TEXT PRIMARY KEY,
     user_id text not null,
-    currency TEXT,
+    currency_id TEXT,
     amount DECIMAL,
     updated_at TIMESTAMPTZ default now(),
     CONSTRAINT fk_user_id
         FOREIGN KEY(user_id)
-        REFERENCES users(id)
+        REFERENCES users(id),
+    CONSTRAINT fk_currency
+        FOREIGN KEY(currency_id)
+        REFERENCES currencies(id)
 );
 
 CREATE TABLE IF NOT EXISTS trade_sessions(
