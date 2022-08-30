@@ -1,9 +1,9 @@
 package users
 
 import (
+	"bbrombacher/cryptoautotrader/controllers/helpers"
 	userRequest "bbrombacher/cryptoautotrader/controllers/users/request"
 	userResponse "bbrombacher/cryptoautotrader/controllers/users/response"
-	"bbrombacher/cryptoautotrader/models"
 	"bbrombacher/cryptoautotrader/storage"
 	storageModels "bbrombacher/cryptoautotrader/storage/models"
 	"bbrombacher/cryptoautotrader/transforms"
@@ -28,31 +28,22 @@ func (c Controller) Register(r *mux.Router) *mux.Router {
 	return v1Router
 }
 
-func ErrResponse(w http.ResponseWriter, statusCode int, message string) {
-	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(models.ErrorResponse{
-		Error: models.ErrorMessage{
-			Message: message,
-		},
-	})
-}
-
 func (c Controller) GetUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id := vars["id"]
 		if id == "" {
-			ErrResponse(w, http.StatusBadRequest, "you must provide a user id")
+			helpers.ErrResponse(w, http.StatusBadRequest, "you must provide a user id")
 			return
 		}
 
 		userEntry, err := c.StorageClient.GetUser(r.Context(), id)
 		if err != nil {
 			if errors.Is(err, storageModels.ErrUserDoesNotExist) {
-				ErrResponse(w, http.StatusNotFound, "could not find user")
+				helpers.ErrResponse(w, http.StatusNotFound, "could not find user")
 				return
 			}
-			ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
+			helpers.ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
 			return
 		}
 
@@ -71,20 +62,20 @@ func (c Controller) CreateUser() http.HandlerFunc {
 
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			ErrResponse(w, http.StatusBadRequest, "could not unmarshal request body")
+			helpers.ErrResponse(w, http.StatusBadRequest, "could not unmarshal request body")
 			return
 		}
 
 		err = req.Validate()
 		if err != nil {
-			ErrResponse(w, http.StatusBadRequest, "request body fails validation")
+			helpers.ErrResponse(w, http.StatusBadRequest, "request body fails validation")
 			return
 		}
 
 		userEntry := transforms.BuildUserEntryFromPostRequest(req)
 		newUserEntry, err := c.StorageClient.CreateUser(r.Context(), userEntry)
 		if err != nil {
-			ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
+			helpers.ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
 			return
 		}
 
@@ -103,14 +94,14 @@ func (c Controller) UpdateUser() http.HandlerFunc {
 		var req userRequest.PatchUserRequest
 		err := req.ParseRequest(r)
 		if err != nil {
-			ErrResponse(w, http.StatusBadRequest, "failed to parse request")
+			helpers.ErrResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
 
 		entry := transforms.BuildUserEntryFromPatchRequest(req)
 		updatedEntry, err := c.StorageClient.UpdateUser(r.Context(), entry, req.SuppliedFields.Array())
 		if err != nil {
-			ErrResponse(w, http.StatusInternalServerError, "failed to update the user")
+			helpers.ErrResponse(w, http.StatusInternalServerError, "failed to update the user")
 			return
 		}
 
@@ -128,13 +119,13 @@ func (c Controller) DeleteUser() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id := vars["id"]
 		if id == "" {
-			ErrResponse(w, http.StatusBadRequest, "you must provide a user id")
+			helpers.ErrResponse(w, http.StatusBadRequest, "you must provide a user id")
 			return
 		}
 
 		err := c.StorageClient.DeleteUser(r.Context(), id)
 		if err != nil {
-			ErrResponse(w, http.StatusInternalServerError, "failed to delete the user")
+			helpers.ErrResponse(w, http.StatusInternalServerError, "failed to delete the user")
 			return
 		}
 

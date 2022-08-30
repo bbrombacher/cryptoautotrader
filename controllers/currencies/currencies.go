@@ -3,7 +3,7 @@ package currencies
 import (
 	currencyRequest "bbrombacher/cryptoautotrader/controllers/currencies/request"
 	currencyResponse "bbrombacher/cryptoautotrader/controllers/currencies/response"
-	"bbrombacher/cryptoautotrader/models"
+	"bbrombacher/cryptoautotrader/controllers/helpers"
 	"bbrombacher/cryptoautotrader/storage"
 	storageModels "bbrombacher/cryptoautotrader/storage/models"
 	"bbrombacher/cryptoautotrader/transforms"
@@ -28,31 +28,22 @@ func (c Controller) Register(r *mux.Router) *mux.Router {
 	return v1Router
 }
 
-func ErrResponse(w http.ResponseWriter, statusCode int, message string) {
-	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(models.ErrorResponse{
-		Error: models.ErrorMessage{
-			Message: message,
-		},
-	})
-}
-
 func (c Controller) GetCurrency() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		id := vars["id"]
 		if id == "" {
-			ErrResponse(w, http.StatusBadRequest, "you must provide a currency id")
+			helpers.ErrResponse(w, http.StatusBadRequest, "you must provide a currency id")
 			return
 		}
 
 		currencyEntry, err := c.StorageClient.GetCurrency(r.Context(), id)
 		if err != nil {
 			if errors.Is(err, storageModels.ErrCurrencyDoesNotExist) {
-				ErrResponse(w, http.StatusNotFound, "could not find currency")
+				helpers.ErrResponse(w, http.StatusNotFound, "could not find currency")
 				return
 			}
-			ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
+			helpers.ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
 			return
 		}
 
@@ -71,20 +62,20 @@ func (c Controller) CreateCurrency() http.HandlerFunc {
 
 		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
-			ErrResponse(w, http.StatusBadRequest, "could not unmarshal request body")
+			helpers.ErrResponse(w, http.StatusBadRequest, "could not unmarshal request body")
 			return
 		}
 
 		err = req.Validate()
 		if err != nil {
-			ErrResponse(w, http.StatusBadRequest, "request body fails validation")
+			helpers.ErrResponse(w, http.StatusBadRequest, "request body fails validation")
 			return
 		}
 
 		currencyEntry := transforms.BuildCurrencyEntryFromPostRequest(req)
 		newCurrencyEntry, err := c.StorageClient.CreateCurrency(r.Context(), currencyEntry)
 		if err != nil {
-			ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
+			helpers.ErrResponse(w, http.StatusInternalServerError, "an unexpected error occurred")
 			return
 		}
 
@@ -103,14 +94,14 @@ func (c Controller) UpdateCurrency() http.HandlerFunc {
 		var req currencyRequest.PatchCurrencyRequest
 		err := req.ParseRequest(r)
 		if err != nil {
-			ErrResponse(w, http.StatusBadRequest, "failed to parse request")
+			helpers.ErrResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
 
 		entry := transforms.BuildCurrencyEntryFromPatchRequest(req)
 		updatedEntry, err := c.StorageClient.UpdateCurrency(r.Context(), entry, req.SuppliedFields.Array())
 		if err != nil {
-			ErrResponse(w, http.StatusInternalServerError, "failed to update the currency")
+			helpers.ErrResponse(w, http.StatusInternalServerError, "failed to update the currency")
 			return
 		}
 
@@ -128,13 +119,13 @@ func (c Controller) DeleteCurrency() http.HandlerFunc {
 		vars := mux.Vars(r)
 		id := vars["id"]
 		if id == "" {
-			ErrResponse(w, http.StatusBadRequest, "you must provide a currency id")
+			helpers.ErrResponse(w, http.StatusBadRequest, "you must provide a currency id")
 			return
 		}
 
 		err := c.StorageClient.DeleteCurrency(r.Context(), id)
 		if err != nil {
-			ErrResponse(w, http.StatusInternalServerError, "failed to delete the currency")
+			helpers.ErrResponse(w, http.StatusInternalServerError, "failed to delete the currency")
 			return
 		}
 
