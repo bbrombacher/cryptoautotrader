@@ -9,6 +9,7 @@ import (
 	goSql "database/sql"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
@@ -16,6 +17,10 @@ import (
 )
 
 func main() {
+
+	dbURL := os.Getenv("DB_URL")
+	log.Println("DBURL", dbURL)
+
 	// set up db
 	sqldb, err := goSql.Open(
 		"postgres",
