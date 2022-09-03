@@ -22,12 +22,12 @@ func main() {
 		"postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable",
 	)
 	if err != nil {
-		log.Fatal("error opening sql", err.Error())
+		log.Println("error opening sql", err.Error())
 	}
 	db := sqlx.NewDb(sqldb, "postgres")
 	sqlClient, err := sql.NewSQLClient(context.Background(), db)
 	if err != nil {
-		log.Fatal("could not start sql client: ", err.Error())
+		log.Println("could not start sql client: ", err.Error())
 	}
 	storageClient := storage.NewStorageClient(sqlClient)
 
