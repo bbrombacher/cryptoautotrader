@@ -16,15 +16,21 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var localDB = "postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable"
+
 func main() {
 
-	dbURL := os.Getenv("DB_URL")
+	dbURL := localDB
+	if os.Getenv("ENV") == "server" {
+		dbURL = os.Getenv("DB_URL")
+	}
+
 	log.Println("DBURL", dbURL)
 
 	// set up db
 	sqldb, err := goSql.Open(
 		"postgres",
-		"postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable",
+		dbURL,
 	)
 	if err != nil {
 		log.Println("error opening sql", err.Error())
