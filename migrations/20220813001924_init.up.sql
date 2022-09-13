@@ -17,17 +17,17 @@ CREATE TABLE IF NOT EXISTS currencies(
 );
 
 CREATE TABLE IF NOT EXISTS balance(
-    id TEXT PRIMARY KEY,
     user_id text not null,
-    currency_id TEXT,
+    currency_id TEXT not null,
     amount DECIMAL,
     updated_at TIMESTAMPTZ default now(),
     CONSTRAINT fk_user_id
         FOREIGN KEY(user_id)
         REFERENCES users(id),
-    CONSTRAINT fk_currency
+    CONSTRAINT fk_currency_id
         FOREIGN KEY(currency_id)
-        REFERENCES currencies(id)
+        REFERENCES currencies(id),
+    CONSTRAINT "balance_pk" PRIMARY KEY ("user_id", "currency_id")
 );
 
 CREATE TABLE IF NOT EXISTS trade_sessions(

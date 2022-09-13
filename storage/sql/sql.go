@@ -5,6 +5,8 @@ package sql
 import (
 	"bbrombacher/cryptoautotrader/storage/models"
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -31,4 +33,13 @@ func NewSQLClient(ctx context.Context, db *sqlx.DB) (*SqlClient, error) {
 		return nil, err
 	}
 	return &SqlClient{db: db}, nil
+}
+
+func enumeratePlaceholders(input string, existingPlaceholder string, args []interface{}) string {
+	var placeholderNumeration []interface{}
+	for i := range args {
+		placeholderNumeration = append(placeholderNumeration, i+1)
+	}
+
+	return fmt.Sprintf(strings.ReplaceAll(input, existingPlaceholder, "$%v"), placeholderNumeration...)
 }

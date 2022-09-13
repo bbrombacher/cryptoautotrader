@@ -5,7 +5,7 @@ postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable
 
 TODO:
 - Balance
-- - Upsert, Get, GetBulk SQL functions
+- - Get, GetBulk SQL functions
 - - Upsert, Get, GetBulk storage functions
 - - Add balance, Get balance API
 

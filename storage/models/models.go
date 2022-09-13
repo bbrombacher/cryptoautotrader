@@ -5,6 +5,7 @@ import (
 	"time"
 
 	jsoninter "github.com/json-iterator/go"
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -61,4 +62,24 @@ func (e *CurrencyEntry) RetrieveTagValues(tag string) (map[string]interface{}, e
 type GetCurrenciesParams struct {
 	Cursor int
 	Limit  int
+}
+
+type BalanceEntry struct {
+	UserID     string          `db:"user_id" json:"user_id"`
+	CurrencyID string          `db:"currency_id" json:"currency_id"`
+	Amount     decimal.Decimal `db:"amount" json:"amount"`
+	UpdatedAt  *time.Time      `db:"updated_at,omitempty" json:"updated_at"`
+}
+
+func (e *BalanceEntry) RetrieveTagValues(tag string) (map[string]interface{}, error) {
+	tagMap := map[string]interface{}{}
+	var rjson = jsoninter.Config{TagKey: tag}.Froze()
+	data, err := rjson.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	if err := rjson.Unmarshal(data, &tagMap); err != nil {
+		return nil, err
+	}
+	return tagMap, nil
 }
