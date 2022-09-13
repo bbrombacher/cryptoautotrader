@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -33,8 +34,8 @@ func (s *SqlClient) SelectCurrency(ctx context.Context, id string) (*models.Curr
 
 func (s *SqlClient) SelectCurrencies(ctx context.Context, params models.GetCurrenciesParams) ([]models.CurrencyEntry, error) {
 
-	var limit int
-	if params.Limit == 0 {
+	limit := params.Limit
+	if limit == 0 {
 		limit = 100
 	}
 
@@ -46,6 +47,8 @@ func (s *SqlClient) SelectCurrencies(ctx context.Context, params models.GetCurre
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println("query", sqlQuery)
 
 	var result []models.CurrencyEntry
 	if err = s.db.SelectContext(ctx, &result, sqlQuery, args...); err != nil {

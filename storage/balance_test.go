@@ -21,12 +21,21 @@ func Test_GetBulkBalance(t *testing.T) {
 	sqlClient := mockstorage.NewMockSQLClient(ctrl)
 
 	amnt := decimal.NewFromFloat32(1.25)
-	expectEntries := []models.BalanceEntry{
+	expectedBalanceEntries := []models.BalanceEntry{
 		{
 			UserID: "U", CurrencyID: "C", Amount: amnt,
 		},
 	}
-	sqlClient.EXPECT().SelectBulkBalance(gomock.Any(), "U").Return(expectEntries, nil)
+
+	sqlClient.EXPECT().SelectBulkBalance(gomock.Any(), "U").Return(expectedBalanceEntries, nil)
+
+	expectedCurrencyEntries := []models.CurrencyEntry{
+		{
+			ID:   "C",
+			Name: "USD",
+		},
+	}
+	sqlClient.EXPECT().SelectCurrencies(gomock.Any(), models.GetCurrenciesParams{Limit: 10000}).Return(expectedCurrencyEntries, nil)
 
 	// make storage client and execute test
 	storageClient := storage.NewStorageClient(sqlClient)
@@ -45,8 +54,11 @@ func Test_GetBalance(t *testing.T) {
 	sqlClient := mockstorage.NewMockSQLClient(ctrl)
 
 	amnt := decimal.NewFromFloat32(1.25)
-	expectEntries := models.BalanceEntry{UserID: "U", CurrencyID: "C", Amount: amnt}
-	sqlClient.EXPECT().SelectBalance(gomock.Any(), "U", "C").Return(&expectEntries, nil)
+	expectedBalanceEntry := models.BalanceEntry{UserID: "U", CurrencyID: "C", Amount: amnt}
+	sqlClient.EXPECT().SelectBalance(gomock.Any(), "U", "C").Return(&expectedBalanceEntry, nil)
+
+	expectedCurrencyEntry := models.CurrencyEntry{ID: "C"}
+	sqlClient.EXPECT().SelectCurrency(gomock.Any(), "C").Return(&expectedCurrencyEntry, nil)
 
 	// make storage client and execute test
 	storageClient := storage.NewStorageClient(sqlClient)
@@ -65,12 +77,15 @@ func Test_UpdateBalance(t *testing.T) {
 	sqlClient := mockstorage.NewMockSQLClient(ctrl)
 
 	amnt := decimal.NewFromFloat32(1.25)
-	entry := models.BalanceEntry{UserID: "U", CurrencyID: "C", Amount: amnt}
-	sqlClient.EXPECT().UpsertBalance(gomock.Any(), entry).Return(&entry, nil)
+	balanceEntry := models.BalanceEntry{UserID: "U", CurrencyID: "C", Amount: amnt}
+	sqlClient.EXPECT().UpsertBalance(gomock.Any(), balanceEntry).Return(&balanceEntry, nil)
+
+	expectedCurrencyEntry := models.CurrencyEntry{ID: "C"}
+	sqlClient.EXPECT().SelectCurrency(gomock.Any(), "C").Return(&expectedCurrencyEntry, nil)
 
 	// make storage client and execute test
 	storageClient := storage.NewStorageClient(sqlClient)
-	result, err := storageClient.UpdateBalance(context.Background(), entry)
+	result, err := storageClient.UpdateBalance(context.Background(), balanceEntry)
 	assert.Nil(t, err)
 	assert.Equal(t, "U", result.UserID)
 	assert.Equal(t, "C", result.CurrencyID)

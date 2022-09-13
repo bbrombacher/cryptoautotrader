@@ -69,6 +69,8 @@ type BalanceEntry struct {
 	CurrencyID string          `db:"currency_id" json:"currency_id"`
 	Amount     decimal.Decimal `db:"amount" json:"amount"`
 	UpdatedAt  *time.Time      `db:"updated_at,omitempty" json:"updated_at"`
+
+	Currency CurrencyEntry `db:"-" json:"-"`
 }
 
 func (e *BalanceEntry) RetrieveTagValues(tag string) (map[string]interface{}, error) {

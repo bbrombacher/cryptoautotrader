@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bbrombacher/cryptoautotrader/controllers/balance"
 	"bbrombacher/cryptoautotrader/controllers/currencies"
 	users "bbrombacher/cryptoautotrader/controllers/users"
 	"bbrombacher/cryptoautotrader/storage"
@@ -49,9 +50,14 @@ func main() {
 		StorageClient: storageClient,
 	}
 
+	balanceController := balance.Controller{
+		StorageClient: storageClient,
+	}
+
 	// setup router
 	r := mux.NewRouter()
 	userController.Register(r)
 	currencyController.Register(r)
+	balanceController.Register(r)
 	http.ListenAndServe(":8080", r)
 }
