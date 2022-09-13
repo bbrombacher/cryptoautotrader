@@ -78,7 +78,6 @@ func (s *SqlClient) SelectBalance(ctx context.Context, userID, currencyID string
 }
 
 func (s *SqlClient) SelectBulkBalance(ctx context.Context, userID string) ([]models.BalanceEntry, error) {
-
 	selectQuery := sq.Select("*").
 		From("balance").
 		Where(sq.Eq{"user_id": userID})
