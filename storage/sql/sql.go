@@ -22,6 +22,10 @@ type SQLClient interface {
 	InsertCurrency(ctx context.Context, entry models.CurrencyEntry) (*models.CurrencyEntry, error)
 	UpdateCurrency(ctx context.Context, entry models.CurrencyEntry, updateColumns []string) (*models.CurrencyEntry, error)
 	DeleteCurrency(ctx context.Context, id string) error
+
+	UpsertBalance(ctx context.Context, entry models.BalanceEntry) (*models.BalanceEntry, error)
+	SelectBalance(ctx context.Context, userID, currencyID string) (*models.BalanceEntry, error)
+	SelectBulkBalance(ctx context.Context, userID string) ([]models.BalanceEntry, error)
 }
 
 type SqlClient struct {

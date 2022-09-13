@@ -93,6 +93,36 @@ func (mr *MockSQLClientMockRecorder) InsertUser(ctx, entry interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockSQLClient)(nil).InsertUser), ctx, entry)
 }
 
+// SelectBalance mocks base method.
+func (m *MockSQLClient) SelectBalance(ctx context.Context, userID, currencyID string) (*models.BalanceEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectBalance", ctx, userID, currencyID)
+	ret0, _ := ret[0].(*models.BalanceEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectBalance indicates an expected call of SelectBalance.
+func (mr *MockSQLClientMockRecorder) SelectBalance(ctx, userID, currencyID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectBalance", reflect.TypeOf((*MockSQLClient)(nil).SelectBalance), ctx, userID, currencyID)
+}
+
+// SelectBulkBalance mocks base method.
+func (m *MockSQLClient) SelectBulkBalance(ctx context.Context, userID string) ([]models.BalanceEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectBulkBalance", ctx, userID)
+	ret0, _ := ret[0].([]models.BalanceEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectBulkBalance indicates an expected call of SelectBulkBalance.
+func (mr *MockSQLClientMockRecorder) SelectBulkBalance(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectBulkBalance", reflect.TypeOf((*MockSQLClient)(nil).SelectBulkBalance), ctx, userID)
+}
+
 // SelectCurrencies mocks base method.
 func (m *MockSQLClient) SelectCurrencies(ctx context.Context, params models.GetCurrenciesParams) ([]models.CurrencyEntry, error) {
 	m.ctrl.T.Helper()
@@ -166,4 +196,19 @@ func (m *MockSQLClient) UpdateUser(ctx context.Context, entry models.UserEntry, 
 func (mr *MockSQLClientMockRecorder) UpdateUser(ctx, entry, updateColumns interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockSQLClient)(nil).UpdateUser), ctx, entry, updateColumns)
+}
+
+// UpsertBalance mocks base method.
+func (m *MockSQLClient) UpsertBalance(ctx context.Context, entry models.BalanceEntry) (*models.BalanceEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertBalance", ctx, entry)
+	ret0, _ := ret[0].(*models.BalanceEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertBalance indicates an expected call of UpsertBalance.
+func (mr *MockSQLClientMockRecorder) UpsertBalance(ctx, entry interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertBalance", reflect.TypeOf((*MockSQLClient)(nil).UpsertBalance), ctx, entry)
 }
