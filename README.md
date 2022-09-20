@@ -5,9 +5,7 @@ postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable
 
 TODO:
 - Transactions
-- - Upsert, Get, GetBulk SQL functions
-- - Upsert, Get, GetBulk storage functions
-- - Get All Transactions API
+- - Validate user has enough balance before submitting transaction
 
 - Trade Sessions
 - - Upsert, Get, GetBulk SQL Functions
