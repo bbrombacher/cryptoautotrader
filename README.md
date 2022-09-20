@@ -4,11 +4,6 @@ auto trader bot beep boop beep
 postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable
 
 TODO:
-- Balance
-- - Get, GetBulk SQL functions
-- - Upsert, Get, GetBulk storage functions
-- - Add balance, Get balance API
-
 - Transactions
 - - Upsert, Get, GetBulk SQL functions
 - - Upsert, Get, GetBulk storage functions

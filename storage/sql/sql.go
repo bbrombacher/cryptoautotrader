@@ -26,6 +26,10 @@ type SQLClient interface {
 	UpsertBalance(ctx context.Context, entry models.BalanceEntry) (*models.BalanceEntry, error)
 	SelectBalance(ctx context.Context, userID, currencyID string) (*models.BalanceEntry, error)
 	SelectBulkBalance(ctx context.Context, userID string) ([]models.BalanceEntry, error)
+
+	InsertTransaction(ctx context.Context, entry models.TransactionEntry) (*models.TransactionEntry, error)
+	SelectTransaction(ctx context.Context, id, userID string) (*models.TransactionEntry, error)
+	SelectTransactions(ctx context.Context, params models.GetTransactionsParams) ([]models.TransactionEntry, error)
 }
 
 type SqlClient struct {

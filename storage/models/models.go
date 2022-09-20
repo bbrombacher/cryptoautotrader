@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	ErrUserDoesNotExist     = errors.New("user does not exist")
-	ErrCurrencyDoesNotExist = errors.New("currency does not exist")
+	ErrUserDoesNotExist        = errors.New("user does not exist")
+	ErrTransactionDoesNotExist = errors.New("transaction does not exist")
+	ErrCurrencyDoesNotExist    = errors.New("currency does not exist")
 )
 
 type UserEntry struct {
@@ -84,4 +85,35 @@ func (e *BalanceEntry) RetrieveTagValues(tag string) (map[string]interface{}, er
 		return nil, err
 	}
 	return tagMap, nil
+}
+
+type TransactionEntry struct {
+	ID              string          `db:"id" json:"id"`
+	UserID          string          `db:"user_id" json:"user_id"`
+	CurrencyID      string          `db:"currency_id" json:"currency_id"`
+	TransactionType string          `db:"transaction_type" json:"transaction_type"`
+	Amount          decimal.Decimal `db:"amount" json:"amount"`
+	Price           decimal.Decimal `db:"price" json:"price"`
+
+	CursorID  int        `db:"cursor_id,omitempty" json:"cursor_id"`
+	CreatedAt *time.Time `db:"created_at,omitempty" json:"created_at"`
+}
+
+func (e *TransactionEntry) RetrieveTagValues(tag string) (map[string]interface{}, error) {
+	tagMap := map[string]interface{}{}
+	var rjson = jsoninter.Config{TagKey: tag}.Froze()
+	data, err := rjson.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	if err := rjson.Unmarshal(data, &tagMap); err != nil {
+		return nil, err
+	}
+	return tagMap, nil
+}
+
+type GetTransactionsParams struct {
+	UserID string
+	Cursor int
+	Limit  int
 }

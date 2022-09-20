@@ -30,26 +30,10 @@ CREATE TABLE IF NOT EXISTS balance(
     CONSTRAINT "balance_pk" PRIMARY KEY ("user_id", "currency_id")
 );
 
-CREATE TABLE IF NOT EXISTS trade_sessions(
-    id TEXT PRIMARY KEY,
-    user_id TEXT,
-    algorithm TEXT,
-    currency TEXT,
-    starting_balance decimal,
-    ending_balance decimal,
-    cursor_id INT GENERATED ALWAYS AS IDENTITY,
-    started_at TIMESTAMPTZ default now(),
-    ended_at TIMESTAMPTZ default now(),
-    CONSTRAINT fk_user_id
-        FOREIGN KEY(user_id)
-        REFERENCES users(id)
-);
-
 CREATE TABLE IF NOT EXISTS transactions(
     id TEXT PRIMARY KEY,
-    trade_session_id TEXT,
     user_id TEXT,
-    currency TEXT,
+    currency_id TEXT,
     transaction_type TEXT,
     amount DECIMAL,
     price DECIMAL,
@@ -58,7 +42,30 @@ CREATE TABLE IF NOT EXISTS transactions(
     CONSTRAINT fk_user_id
         FOREIGN KEY(user_id)
         REFERENCES users(id),
-    CONSTRAINT fk_trade_session_id
-        FOREIGN KEY(trade_session_id)
-        REFERENCES trade_sessions(id)    
+    CONSTRAINT fk_currency_id
+        FOREIGN KEY(currency_id)
+        REFERENCES currencies(id)
+);
+
+CREATE TABLE IF NOT EXISTS trade_sessions(
+    id TEXT PRIMARY KEY,
+    user_id TEXT,
+    algorithm TEXT,
+    currency_id TEXT,
+    starting_balance decimal,
+    ending_balance decimal,
+    cursor_id INT GENERATED ALWAYS AS IDENTITY,
+    started_at TIMESTAMPTZ default now(),
+    ended_at TIMESTAMPTZ default now(),
+    CONSTRAINT fk_user_id
+        FOREIGN KEY(user_id)
+        REFERENCES users(id),
+    CONSTRAINT fk_currency_id
+        FOREIGN KEY(currency_id)
+        REFERENCES currencies(id)
+);
+
+CREATE TABLE IF NOT EXISTS transaction_sessions_map(
+    trade_session_id TEXT,
+    transaction_id TEXT
 );

@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -47,8 +46,6 @@ func (s *SqlClient) SelectCurrencies(ctx context.Context, params models.GetCurre
 	if err != nil {
 		return nil, err
 	}
-
-	log.Println("query", sqlQuery)
 
 	var result []models.CurrencyEntry
 	if err = s.db.SelectContext(ctx, &result, sqlQuery, args...); err != nil {

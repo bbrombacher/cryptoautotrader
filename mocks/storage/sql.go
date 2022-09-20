@@ -78,6 +78,21 @@ func (mr *MockSQLClientMockRecorder) InsertCurrency(ctx, entry interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertCurrency", reflect.TypeOf((*MockSQLClient)(nil).InsertCurrency), ctx, entry)
 }
 
+// InsertTransaction mocks base method.
+func (m *MockSQLClient) InsertTransaction(ctx context.Context, entry models.TransactionEntry) (*models.TransactionEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertTransaction", ctx, entry)
+	ret0, _ := ret[0].(*models.TransactionEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InsertTransaction indicates an expected call of InsertTransaction.
+func (mr *MockSQLClientMockRecorder) InsertTransaction(ctx, entry interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertTransaction", reflect.TypeOf((*MockSQLClient)(nil).InsertTransaction), ctx, entry)
+}
+
 // InsertUser mocks base method.
 func (m *MockSQLClient) InsertUser(ctx context.Context, entry models.UserEntry) (*models.UserEntry, error) {
 	m.ctrl.T.Helper()
@@ -151,6 +166,36 @@ func (m *MockSQLClient) SelectCurrency(ctx context.Context, id string) (*models.
 func (mr *MockSQLClientMockRecorder) SelectCurrency(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectCurrency", reflect.TypeOf((*MockSQLClient)(nil).SelectCurrency), ctx, id)
+}
+
+// SelectTransaction mocks base method.
+func (m *MockSQLClient) SelectTransaction(ctx context.Context, id, userID string) (*models.TransactionEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectTransaction", ctx, id, userID)
+	ret0, _ := ret[0].(*models.TransactionEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectTransaction indicates an expected call of SelectTransaction.
+func (mr *MockSQLClientMockRecorder) SelectTransaction(ctx, id, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectTransaction", reflect.TypeOf((*MockSQLClient)(nil).SelectTransaction), ctx, id, userID)
+}
+
+// SelectTransactions mocks base method.
+func (m *MockSQLClient) SelectTransactions(ctx context.Context, params models.GetTransactionsParams) ([]models.TransactionEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectTransactions", ctx, params)
+	ret0, _ := ret[0].([]models.TransactionEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectTransactions indicates an expected call of SelectTransactions.
+func (mr *MockSQLClientMockRecorder) SelectTransactions(ctx, params interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectTransactions", reflect.TypeOf((*MockSQLClient)(nil).SelectTransactions), ctx, params)
 }
 
 // SelectUser mocks base method.
