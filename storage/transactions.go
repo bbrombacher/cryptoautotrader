@@ -3,12 +3,33 @@ package storage
 import (
 	"bbrombacher/cryptoautotrader/storage/models"
 	"context"
+	"errors"
+	"fmt"
 )
 
 func (s *StorageClient) CreateTransaction(ctx context.Context, input models.TransactionEntry) (*models.TransactionEntry, error) {
+
+	currentBalance, err := s.GetBalance(ctx, input.UserID, input.CurrencyID)
+	if err != nil {
+		return nil, fmt.Errorf("error getting balance %w", err)
+	}
+	if currentBalance.Amount.LessThan(input.Price) {
+		return nil, errors.New("insufficient funds for transaction")
+	}
+
 	entry, err := s.SqlClient.InsertTransaction(ctx, input)
 	if err != nil {
 		return nil, err
+	}
+
+	balanceInput := models.BalanceEntry{
+		UserID:     input.UserID,
+		CurrencyID: input.CurrencyID,
+		Amount:     currentBalance.Amount.Sub(input.Price),
+	}
+	_, err = s.UpdateBalance(ctx, balanceInput)
+	if err != nil {
+		return nil, fmt.Errorf("error updating balance %w", err)
 	}
 
 	return entry, nil
