@@ -55,8 +55,8 @@ CREATE TABLE IF NOT EXISTS trade_sessions(
     starting_balance decimal,
     ending_balance decimal,
     cursor_id INT GENERATED ALWAYS AS IDENTITY,
-    started_at TIMESTAMPTZ default now(),
-    ended_at TIMESTAMPTZ default now(),
+    started_at TIMESTAMPTZ,
+    ended_at TIMESTAMPTZ,
     CONSTRAINT fk_user_id
         FOREIGN KEY(user_id)
         REFERENCES users(id),

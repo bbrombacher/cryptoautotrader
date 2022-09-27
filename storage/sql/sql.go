@@ -30,6 +30,10 @@ type SQLClient interface {
 	InsertTransaction(ctx context.Context, entry models.TransactionEntry) (*models.TransactionEntry, error)
 	SelectTransaction(ctx context.Context, id, userID string) (*models.TransactionEntry, error)
 	SelectTransactions(ctx context.Context, params models.GetTransactionsParams) ([]models.TransactionEntry, error)
+
+	UpsertTradeSession(ctx context.Context, entry models.TradeSessionEntry) (*models.TradeSessionEntry, error)
+	SelectTradeSession(ctx context.Context, userID, sessionID string) (*models.TradeSessionEntry, error)
+	SelectTradeSessions(ctx context.Context, params models.GetTradeSessionsParams) ([]models.TradeSessionEntry, error)
 }
 
 type SqlClient struct {

@@ -117,3 +117,35 @@ type GetTransactionsParams struct {
 	Cursor int
 	Limit  int
 }
+
+type TradeSessionEntry struct {
+	ID              string          `db:"id" json:"id"`
+	UserID          string          `db:"user_id" json:"user_id"`
+	Algorithm       string          `db:"algorithm" json:"algorithm"`
+	CurrencyID      string          `db:"currency_id" json:"currency_id"`
+	StartingBalance decimal.Decimal `db:"starting_balance" json:"starting_balance"`
+	EndingBalance   decimal.Decimal `db:"ending_balance" json:"ending_balance"`
+
+	CursorID  int        `db:"cursor_id,omitempty" json:"cursor_id"`
+	StartedAt *time.Time `db:"started_at,omitempty" json:"started_at"`
+	EndedAt   *time.Time `db:"ended_at,omitempty" json:"ended_at"`
+}
+
+func (e *TradeSessionEntry) RetrieveTagValues(tag string) (map[string]interface{}, error) {
+	tagMap := map[string]interface{}{}
+	var rjson = jsoninter.Config{TagKey: tag}.Froze()
+	data, err := rjson.Marshal(e)
+	if err != nil {
+		return nil, err
+	}
+	if err := rjson.Unmarshal(data, &tagMap); err != nil {
+		return nil, err
+	}
+	return tagMap, nil
+}
+
+type GetTradeSessionsParams struct {
+	UserID string
+	Cursor int
+	Limit  int
+}

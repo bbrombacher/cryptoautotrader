@@ -21,11 +21,19 @@ func GetTestDB() *sqlx.DB {
 
 func testCleanup() {
 
+	if _, err := validDb.Exec("DELETE FROM trade_sessions"); err != nil {
+		log.Fatalln("could not clear test db - trade_sessions", err)
+	}
+
+	if _, err := validDb.Exec(`ALTER TABLE trade_sessions ALTER COLUMN cursor_id RESTART SET START 1`); err != nil {
+		log.Fatalln("could not reset curosr_id sequence - trade_sessions", err)
+	}
+
 	if _, err := validDb.Exec("DELETE FROM transactions"); err != nil {
 		log.Fatalln("could not clear test db - transactions", err)
 	}
 
-	if _, err := validDb.Exec(`ALTER TABLE currencies ALTER COLUMN cursor_id RESTART SET START 1`); err != nil {
+	if _, err := validDb.Exec(`ALTER TABLE transactions ALTER COLUMN cursor_id RESTART SET START 1`); err != nil {
 		log.Fatalln("could not reset curosr_id sequence - transactions", err)
 	}
 

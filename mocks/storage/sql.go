@@ -168,6 +168,36 @@ func (mr *MockSQLClientMockRecorder) SelectCurrency(ctx, id interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectCurrency", reflect.TypeOf((*MockSQLClient)(nil).SelectCurrency), ctx, id)
 }
 
+// SelectTradeSession mocks base method.
+func (m *MockSQLClient) SelectTradeSession(ctx context.Context, userID, sessionID string) (*models.TradeSessionEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectTradeSession", ctx, userID, sessionID)
+	ret0, _ := ret[0].(*models.TradeSessionEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectTradeSession indicates an expected call of SelectTradeSession.
+func (mr *MockSQLClientMockRecorder) SelectTradeSession(ctx, userID, sessionID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectTradeSession", reflect.TypeOf((*MockSQLClient)(nil).SelectTradeSession), ctx, userID, sessionID)
+}
+
+// SelectTradeSessions mocks base method.
+func (m *MockSQLClient) SelectTradeSessions(ctx context.Context, params models.GetTradeSessionsParams) ([]models.TradeSessionEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectTradeSessions", ctx, params)
+	ret0, _ := ret[0].([]models.TradeSessionEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectTradeSessions indicates an expected call of SelectTradeSessions.
+func (mr *MockSQLClientMockRecorder) SelectTradeSessions(ctx, params interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectTradeSessions", reflect.TypeOf((*MockSQLClient)(nil).SelectTradeSessions), ctx, params)
+}
+
 // SelectTransaction mocks base method.
 func (m *MockSQLClient) SelectTransaction(ctx context.Context, id, userID string) (*models.TransactionEntry, error) {
 	m.ctrl.T.Helper()
@@ -256,4 +286,19 @@ func (m *MockSQLClient) UpsertBalance(ctx context.Context, entry models.BalanceE
 func (mr *MockSQLClientMockRecorder) UpsertBalance(ctx, entry interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertBalance", reflect.TypeOf((*MockSQLClient)(nil).UpsertBalance), ctx, entry)
+}
+
+// UpsertTradeSession mocks base method.
+func (m *MockSQLClient) UpsertTradeSession(ctx context.Context, entry models.TradeSessionEntry) (*models.TradeSessionEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertTradeSession", ctx, entry)
+	ret0, _ := ret[0].(*models.TradeSessionEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertTradeSession indicates an expected call of UpsertTradeSession.
+func (mr *MockSQLClientMockRecorder) UpsertTradeSession(ctx, entry interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertTradeSession", reflect.TypeOf((*MockSQLClient)(nil).UpsertTradeSession), ctx, entry)
 }
