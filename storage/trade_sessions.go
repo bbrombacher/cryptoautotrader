@@ -6,6 +6,7 @@ import (
 )
 
 func (s *StorageClient) StartStopTradeSession(ctx context.Context, input models.TradeSessionEntry) (*models.TradeSessionEntry, error) {
+	// add logic to get starting and ending balance?
 	entry, err := s.SqlClient.UpsertTradeSession(ctx, input)
 	if err != nil {
 		return nil, err
