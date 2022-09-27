@@ -5,7 +5,6 @@ postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable
 
 TODO:
 - Trade Sessions
-- - Upsert, Get, GetBulk storage functions
 - - Get, GetBulk API
 - - For reach transaction, insert entry to transaction_sessions_map (with transaction_id and trade_session_id)
 - - Create logic of actual trade session (i.e. bot go brrrr)
