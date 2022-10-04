@@ -9,9 +9,10 @@ import (
 )
 
 var (
-	ErrUserDoesNotExist        = errors.New("user does not exist")
-	ErrTransactionDoesNotExist = errors.New("transaction does not exist")
-	ErrCurrencyDoesNotExist    = errors.New("currency does not exist")
+	ErrUserDoesNotExist         = errors.New("user does not exist")
+	ErrTransactionDoesNotExist  = errors.New("transaction does not exist")
+	ErrCurrencyDoesNotExist     = errors.New("currency does not exist")
+	ErrTradeSessionDoesNotExist = errors.New("trade session does not exist")
 )
 
 type UserEntry struct {
