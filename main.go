@@ -3,6 +3,7 @@ package main
 import (
 	"bbrombacher/cryptoautotrader/controllers/balance"
 	"bbrombacher/cryptoautotrader/controllers/currencies"
+	"bbrombacher/cryptoautotrader/controllers/trade_sessions"
 	"bbrombacher/cryptoautotrader/controllers/transactions"
 	users "bbrombacher/cryptoautotrader/controllers/users"
 	"bbrombacher/cryptoautotrader/storage"
@@ -59,11 +60,16 @@ func main() {
 		StorageClient: storageClient,
 	}
 
+	tradeSessionsController := trade_sessions.Controller{
+		StorageClient: storageClient,
+	}
+
 	// setup router
 	r := mux.NewRouter()
 	userController.Register(r)
 	currencyController.Register(r)
 	balanceController.Register(r)
 	transactionController.Register(r)
+	tradeSessionsController.Register(r)
 	http.ListenAndServe(":8080", r)
 }
