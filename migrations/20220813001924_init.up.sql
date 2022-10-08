@@ -67,5 +67,6 @@ CREATE TABLE IF NOT EXISTS trade_sessions(
 
 CREATE TABLE IF NOT EXISTS transaction_sessions_map(
     trade_session_id TEXT,
-    transaction_id TEXT
+    transaction_id TEXT,
+    CONSTRAINT "trade_session_map_pk" PRIMARY KEY ("trade_session_id", "transaction_id")
 );

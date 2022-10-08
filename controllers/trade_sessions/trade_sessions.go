@@ -6,9 +6,11 @@ import (
 	tradeSessionsResponse "bbrombacher/cryptoautotrader/controllers/trade_sessions/response"
 	"bbrombacher/cryptoautotrader/storage"
 	storageModels "bbrombacher/cryptoautotrader/storage/models"
+	"bbrombacher/cryptoautotrader/tradebot"
 	"bbrombacher/cryptoautotrader/transforms"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -16,6 +18,7 @@ import (
 
 type Controller struct {
 	StorageClient *storage.StorageClient
+	Bot           tradebot.Bot
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
@@ -23,6 +26,8 @@ func (c Controller) Register(r *mux.Router) *mux.Router {
 
 	v1Router.HandleFunc("/trade-sessions", c.GetTradeSessions()).Methods(http.MethodGet)
 	v1Router.HandleFunc("/trade-sessions/{id}", c.GetTradeSession()).Methods(http.MethodGet)
+	v1Router.HandleFunc("/trade-sessions/start", c.StartSession()).Methods(http.MethodPost)
+	v1Router.HandleFunc("/trade-sessions/stop/{trade-session-id}", c.StopSession()).Methods(http.MethodPost)
 
 	return v1Router
 }
@@ -79,6 +84,57 @@ func (c Controller) GetTradeSession() http.HandlerFunc {
 		tradeSessions := []storageModels.TradeSessionEntry{*tradeSessionEntry}
 		resp := tradeSessionsResponse.GetTradeSessionsResponse{
 			TradeSessions: tradeSessions,
+		}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(resp)
+	}
+}
+
+func (c Controller) StartSession() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID := r.Header.Get("x-user-id")
+		if userID == "" {
+			helpers.ErrResponse(w, http.StatusBadRequest, "you must provide a x-user-id")
+			return
+		}
+
+		tradeID, err := c.Bot.StartTrading(userID, 10)
+		if err != nil {
+			helpers.ErrResponse(w, http.StatusInternalServerError, fmt.Sprintf("failed to start trading: %v", err.Error()))
+			return
+		}
+
+		resp := map[string]interface{}{
+			"trade_id": tradeID,
+		}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(resp)
+	}
+}
+
+func (c Controller) StopSession() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID := r.Header.Get("x-user-id")
+		if userID == "" {
+			helpers.ErrResponse(w, http.StatusBadRequest, "you must provide a x-user-id")
+			return
+		}
+
+		vars := mux.Vars(r)
+		tradeSessionID := vars["trade-session-id"]
+		if tradeSessionID == "" {
+			helpers.ErrResponse(w, http.StatusBadRequest, "you must provide a trade session id")
+			return
+		}
+
+		err := c.Bot.StopTrading(userID, tradeSessionID)
+		if err != nil {
+			helpers.ErrResponse(w, http.StatusInternalServerError, fmt.Sprintf("failed to stop trading: %v", err.Error()))
+			return
+		}
+
+		resp := map[string]interface{}{
+			"result": "success",
 		}
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resp)

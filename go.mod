@@ -15,6 +15,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/json-iterator/go v1.1.12
 	github.com/lib/pq v1.10.6
+	github.com/matryer/runner v0.0.0-20211213160944-9f99df82ff29
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.8.0
 )

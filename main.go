@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bbrombacher/cryptoautotrader/coinbase"
 	"bbrombacher/cryptoautotrader/controllers/balance"
 	"bbrombacher/cryptoautotrader/controllers/currencies"
 	"bbrombacher/cryptoautotrader/controllers/trade_sessions"
@@ -8,11 +9,13 @@ import (
 	users "bbrombacher/cryptoautotrader/controllers/users"
 	"bbrombacher/cryptoautotrader/storage"
 	"bbrombacher/cryptoautotrader/storage/sql"
+	"bbrombacher/cryptoautotrader/tradebot"
 	"context"
 	goSql "database/sql"
 	"log"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
@@ -62,6 +65,11 @@ func main() {
 
 	tradeSessionsController := trade_sessions.Controller{
 		StorageClient: storageClient,
+		Bot: tradebot.Bot{
+			Coinbase:      *coinbase.New("wss://ws-feed.pro.coinbase.com"),
+			StorageClient: storageClient,
+			Tasks:         &sync.Map{},
+		},
 	}
 
 	// setup router
