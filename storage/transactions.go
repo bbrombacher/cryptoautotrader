@@ -9,6 +9,11 @@ import (
 
 func (s *StorageClient) CreateTransaction(ctx context.Context, input models.TransactionEntry) (*models.TransactionEntry, error) {
 
+	// get balance of purchase with currency and to purchase currency
+	// validate purchase with currency has enough to continue
+	// insert into transaction table
+	// update balance of purchase with currency and purchased currency.
+
 	currentBalance, err := s.GetBalance(ctx, input.UserID, input.CurrencyID)
 	if err != nil {
 		return nil, fmt.Errorf("error getting balance %w", err)
