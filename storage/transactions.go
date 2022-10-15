@@ -7,18 +7,20 @@ import (
 	"fmt"
 )
 
+// would it make more sense to have a "buy" function and "sell" function?
 func (s *StorageClient) CreateTransaction(ctx context.Context, input models.TransactionEntry) (*models.TransactionEntry, error) {
 
-	// get balance of purchase with currency and to purchase currency
-	// validate purchase with currency has enough to continue
-	// insert into transaction table
-	// update balance of purchase with currency and purchased currency.
+	cost := input.Price.Mul(input.Amount)
 
-	currentBalance, err := s.GetBalance(ctx, input.UserID, input.CurrencyID)
+	useCurrencyBalance, err := s.GetBalance(ctx, input.UserID, input.UseCurrencyID)
 	if err != nil {
-		return nil, fmt.Errorf("error getting balance %w", err)
+		return nil, fmt.Errorf("error getting balance for use currency %w", err)
 	}
-	if currentBalance.Amount.LessThan(input.Price) {
+	getCurrencyBalance, err := s.GetBalance(ctx, input.UserID, input.GetCurrencyID)
+	if err != nil {
+		return nil, fmt.Errorf("error getting balance for get currency %w", err)
+	}
+	if useCurrencyBalance.Amount.LessThan(cost) {
 		return nil, errors.New("insufficient funds for transaction")
 	}
 
@@ -27,16 +29,28 @@ func (s *StorageClient) CreateTransaction(ctx context.Context, input models.Tran
 		return nil, err
 	}
 
-	balanceInput := models.BalanceEntry{
+	useBalanceUpdate := models.BalanceEntry{
 		UserID:     input.UserID,
-		CurrencyID: input.CurrencyID,
-		Amount:     currentBalance.Amount.Sub(input.Price),
+		CurrencyID: input.UseCurrencyID,
+		Amount:     useCurrencyBalance.Amount.Sub(cost),
 	}
-	_, err = s.UpdateBalance(ctx, balanceInput)
+	_, err = s.UpdateBalance(ctx, useBalanceUpdate)
 	if err != nil {
 		return nil, fmt.Errorf("error updating balance %w", err)
 	}
 
+	getBalanceUpdate := models.BalanceEntry{
+		UserID:     input.UserID,
+		CurrencyID: input.GetCurrencyID,
+		Amount:     getCurrencyBalance.Amount.Add(input.Amount),
+	}
+	_, err = s.UpdateBalance(ctx, getBalanceUpdate)
+	if err != nil {
+		return nil, fmt.Errorf("error updating balance %w", err)
+	}
+
+	// probably need to return more information than just the transaction
+	// such as the final balance of get and use
 	return entry, nil
 }
 

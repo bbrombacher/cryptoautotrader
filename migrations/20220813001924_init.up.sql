@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS balance(
 CREATE TABLE IF NOT EXISTS transactions(
     id TEXT PRIMARY KEY,
     user_id TEXT,
-    currency_id TEXT,
+    use_currency_id TEXT,
+    get_currency_id TEXT,
     transaction_type TEXT,
     amount DECIMAL,
     price DECIMAL,
@@ -42,8 +43,11 @@ CREATE TABLE IF NOT EXISTS transactions(
     CONSTRAINT fk_user_id
         FOREIGN KEY(user_id)
         REFERENCES users(id),
-    CONSTRAINT fk_currency_id
-        FOREIGN KEY(currency_id)
+    CONSTRAINT fk_use_currency_id
+        FOREIGN KEY(use_currency_id)
+        REFERENCES currencies(id),
+    CONSTRAINT fk_get_currency_id
+        FOREIGN KEY(get_currency_id)
         REFERENCES currencies(id)
 );
 

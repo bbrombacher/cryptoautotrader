@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	jsoninter "github.com/json-iterator/go"
@@ -61,6 +62,18 @@ func (e *CurrencyEntry) RetrieveTagValues(tag string) (map[string]interface{}, e
 	return tagMap, nil
 }
 
+type Currencies []CurrencyEntry
+
+func (c Currencies) GetCurrencyIDByName(name string) (string, error) {
+	for _, value := range c {
+		if value.Name == name {
+			return value.ID, nil
+		}
+	}
+
+	return "", fmt.Errorf("could not find currency with name %s", name)
+}
+
 type GetCurrenciesParams struct {
 	Cursor int
 	Limit  int
@@ -91,8 +104,9 @@ func (e *BalanceEntry) RetrieveTagValues(tag string) (map[string]interface{}, er
 type TransactionEntry struct {
 	ID              string          `db:"id" json:"id"`
 	UserID          string          `db:"user_id" json:"user_id"`
-	CurrencyID      string          `db:"currency_id" json:"currency_id"`
-	TransactionType string          `db:"transaction_type" json:"transaction_type"`
+	UseCurrencyID   string          `db:"use_currency_id" json:"use_currency_id"`
+	GetCurrencyID   string          `db:"get_currency_id" json:"get_currency_id"`
+	TransactionType string          `db:"transaction_type" json:"transaction_type"` // buy/sell
 	Amount          decimal.Decimal `db:"amount" json:"amount"`
 	Price           decimal.Decimal `db:"price" json:"price"`
 

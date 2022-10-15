@@ -7,6 +7,7 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/shopspring/decimal"
 )
 
 func (s *SqlClient) UpsertBalance(ctx context.Context, entry models.BalanceEntry) (*models.BalanceEntry, error) {
@@ -71,6 +72,13 @@ func (s *SqlClient) SelectBalance(ctx context.Context, userID, currencyID string
 	var result models.BalanceEntry
 	err = s.db.GetContext(ctx, &result, sqlQuery, args...)
 	if err != nil {
+		if strings.Contains(err.Error(), "no rows in result set") {
+			return &models.BalanceEntry{
+				UserID:     userID,
+				CurrencyID: currencyID,
+				Amount:     decimal.NewFromInt(0),
+			}, nil
+		}
 		return nil, err
 	}
 

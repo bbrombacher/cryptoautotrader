@@ -45,7 +45,8 @@ func TestSQLClient_InsertTransaction(t *testing.T) {
 	entry := models.TransactionEntry{
 		ID:              id.String(),
 		UserID:          "user_one",
-		CurrencyID:      "currency_one",
+		UseCurrencyID:   "currency_one",
+		GetCurrencyID:   "currency_two",
 		TransactionType: "buy",
 		Amount:          decimal.NewFromFloat(1.00),
 		Price:           decimal.NewFromFloat(1.25),
@@ -54,7 +55,7 @@ func TestSQLClient_InsertTransaction(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, id.String(), result.ID)
-	assert.Equal(t, "currency_one", result.CurrencyID)
+	assert.Equal(t, "currency_one", result.UseCurrencyID)
 	assert.Equal(t, "user_one", result.UserID)
 	assert.Equal(t, "buy", result.TransactionType)
 
@@ -110,7 +111,7 @@ func TestSQLClient_SelectTransaction(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, "transaction_one", result.ID)
-	assert.Equal(t, "currency_one", result.CurrencyID)
+	assert.Equal(t, "currency_one", result.UseCurrencyID)
 	assert.Equal(t, "user_one", result.UserID)
 	assert.Equal(t, "buy", result.TransactionType)
 
@@ -170,7 +171,7 @@ func TestSQLClient_SelectTransactions(t *testing.T) {
 
 	transactionOne := result[0]
 	assert.Equal(t, "transaction_one", transactionOne.ID)
-	assert.Equal(t, "currency_one", transactionOne.CurrencyID)
+	assert.Equal(t, "currency_one", transactionOne.UseCurrencyID)
 	assert.Equal(t, "user_one", transactionOne.UserID)
 	assert.Equal(t, "buy", transactionOne.TransactionType)
 
