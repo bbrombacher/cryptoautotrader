@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/matryer/runner"
@@ -21,6 +22,8 @@ type Bot struct {
 }
 
 func (b Bot) StartTrading(userID string, duration int) (string, error) {
+
+	ctx := context.Background()
 
 	// start ticker feed
 	tickerID, err := b.Coinbase.StartTickerFeed(coinbase.StartTickerParams{
@@ -38,7 +41,7 @@ func (b Bot) StartTrading(userID string, duration int) (string, error) {
 	}
 
 	var currencies models.Currencies
-	currencies, err = b.StorageClient.GetCurrencies(context.Background(), models.GetCurrenciesParams{
+	currencies, err = b.StorageClient.GetCurrencies(ctx, models.GetCurrenciesParams{
 		Cursor: 0,
 		Limit:  100,
 	})
@@ -69,6 +72,24 @@ func (b Bot) StartTrading(userID string, duration int) (string, error) {
 		}
 		return nil
 	})
+
+	balance, err := b.StorageClient.GetBalance(ctx, userID, currencyOne)
+	if err != nil {
+		return "", err
+	}
+
+	now := time.Now()
+	_, err = b.StorageClient.StartStopTradeSession(ctx, models.TradeSessionEntry{
+		ID:              tickerID,
+		UserID:          userID,
+		Algorithm:       "basic",
+		CurrencyID:      currencyOne,
+		StartingBalance: balance.Amount,
+		StartedAt:       &now,
+	})
+	if err != nil {
+		return "", err
+	}
 
 	b.Tasks.Store(tickerID, task)
 
@@ -175,6 +196,39 @@ func (b Bot) StopTrading(userID string, tickerID string) error {
 	task.Stop()
 
 	err := b.Coinbase.CloseTickerFeed(tickerID)
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+
+	var currencies models.Currencies
+	currencies, err = b.StorageClient.GetCurrencies(ctx, models.GetCurrenciesParams{
+		Cursor: 0,
+		Limit:  100,
+	})
+	if err != nil {
+		return err
+	}
+
+	currencyOne, err := currencies.GetCurrencyIDByName("usd")
+	if err != nil {
+		log.Println("get currency by name err", err)
+	}
+
+	balance, err := b.StorageClient.GetBalance(ctx, userID, currencyOne)
+	if err != nil {
+		return err
+	}
+
+	now := time.Now()
+	_, err = b.StorageClient.StartStopTradeSession(ctx, models.TradeSessionEntry{
+		ID:            tickerID,
+		UserID:        userID,
+		CurrencyID:    currencyOne,
+		EndingBalance: balance.Amount,
+		EndedAt:       &now,
+	})
 	if err != nil {
 		return err
 	}
