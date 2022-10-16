@@ -166,8 +166,8 @@ type GetTradeSessionsParams struct {
 }
 
 type TransactionSessionMapEntry struct {
-	TradeSessionID string
-	TransactionID  string
+	TradeSessionID string `db:"trade_session_id"`
+	TransactionID  string `db:"transaction_id"`
 }
 
 func (e *TransactionSessionMapEntry) RetrieveTagValues(tag string) (map[string]interface{}, error) {

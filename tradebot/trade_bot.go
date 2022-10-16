@@ -97,6 +97,7 @@ func (b Bot) startTrading(userID, tickerID, currencyOne, currencyTwo string) err
 				Price:          price,
 			})
 			if err != nil {
+				log.Println("buy trad err", err)
 				b.StopTrading(userID, tickerID)
 			}
 			buyCount = 0
@@ -114,6 +115,7 @@ func (b Bot) startTrading(userID, tickerID, currencyOne, currencyTwo string) err
 				Price:          price,
 			})
 			if err != nil {
+				log.Println("sell trad err", err)
 				b.StopTrading(userID, tickerID)
 			}
 			sellCount = 0
@@ -137,7 +139,7 @@ type TransactionParams struct {
 
 func (b Bot) makeTrade(params TransactionParams) error {
 	id := uuid.New()
-	_, err := b.StorageClient.CreateTransaction(
+	entry, err := b.StorageClient.CreateTransaction(
 		context.Background(),
 		params.Type,
 		models.TransactionEntry{
@@ -153,6 +155,8 @@ func (b Bot) makeTrade(params TransactionParams) error {
 	if err != nil {
 		return err
 	}
+
+	log.Printf("successful transaction %#v", entry)
 
 	return nil
 }
