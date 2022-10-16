@@ -67,7 +67,6 @@ func (b Bot) StartTrading(userID string, duration int) (string, error) {
 			currencyTwo,
 		)
 		if err != nil {
-			log.Println("error:", err)
 			return err
 		}
 		return nil
@@ -118,7 +117,6 @@ func (b Bot) startTrading(userID, tickerID, currencyOne, currencyTwo string) err
 				Price:          price,
 			})
 			if err != nil {
-				log.Println("buy trad err", err)
 				b.StopTrading(userID, tickerID)
 			}
 			buyCount = 0
@@ -136,7 +134,6 @@ func (b Bot) startTrading(userID, tickerID, currencyOne, currencyTwo string) err
 				Price:          price,
 			})
 			if err != nil {
-				log.Println("sell trad err", err)
 				b.StopTrading(userID, tickerID)
 			}
 			sellCount = 0
