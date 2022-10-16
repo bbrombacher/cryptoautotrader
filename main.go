@@ -23,6 +23,7 @@ import (
 )
 
 var localDB = "postgres://pguser:pgpass@localhost:9001/robot-transact?sslmode=disable"
+var coinbaseURL = "wss://ws-feed.pro.coinbase.com"
 
 func main() {
 
@@ -66,7 +67,7 @@ func main() {
 	tradeSessionsController := trade_sessions.Controller{
 		StorageClient: storageClient,
 		Bot: tradebot.Bot{
-			Coinbase:      *coinbase.New("wss://ws-feed.pro.coinbase.com"),
+			Coinbase:      *coinbase.New(coinbaseURL),
 			StorageClient: storageClient,
 			Tasks:         &sync.Map{},
 		},
