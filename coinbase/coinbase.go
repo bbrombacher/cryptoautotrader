@@ -35,16 +35,16 @@ func (c Client) StartTickerFeed(params StartTickerParams) (string, error) {
 	return id.String(), nil
 }
 
-func (c Client) GetTickerMessages(id string) (map[string]interface{}, error) {
+func (c Client) GetTickerMessages(id string) (TickerMsg, error) {
+	var message TickerMsg
 	wsConn, ok := c.tickers[id]
 	if !ok {
-		return nil, errors.New("id does not exist")
+		return message, errors.New("id does not exist")
 	}
 
-	message := map[string]interface{}{}
 	err := wsConn.ReadJSON(&message)
 	if err != nil {
-		return nil, err
+		return message, err
 	}
 	return message, nil
 }

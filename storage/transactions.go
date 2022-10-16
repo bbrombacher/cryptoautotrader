@@ -7,8 +7,7 @@ import (
 	"fmt"
 )
 
-// would it make more sense to have a "buy" function and "sell" function?
-func (s *StorageClient) CreateTransaction(ctx context.Context, input models.TransactionEntry) (*models.TransactionEntry, error) {
+func (s *StorageClient) CreateTransaction(ctx context.Context, tradeSessionID string, input models.TransactionEntry) (*models.TransactionEntry, error) {
 
 	cost := input.Price.Mul(input.Amount)
 
@@ -25,6 +24,14 @@ func (s *StorageClient) CreateTransaction(ctx context.Context, input models.Tran
 	}
 
 	entry, err := s.SqlClient.InsertTransaction(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.SqlClient.InsertTransactionSessionMapEntry(ctx, models.TransactionSessionMapEntry{
+		TradeSessionID: tradeSessionID,
+		TransactionID:  input.ID,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -49,8 +56,6 @@ func (s *StorageClient) CreateTransaction(ctx context.Context, input models.Tran
 		return nil, fmt.Errorf("error updating balance %w", err)
 	}
 
-	// probably need to return more information than just the transaction
-	// such as the final balance of get and use
 	return entry, nil
 }
 

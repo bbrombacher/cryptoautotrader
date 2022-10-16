@@ -5,7 +5,6 @@ import (
 	"bbrombacher/cryptoautotrader/storage"
 	"bbrombacher/cryptoautotrader/storage/models"
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"sync"
@@ -19,11 +18,6 @@ type Bot struct {
 	Coinbase      coinbase.Client
 	StorageClient *storage.StorageClient
 	Tasks         *sync.Map
-}
-
-type currencies struct {
-	UseCurrency string
-	GetCurrency string
 }
 
 func (b Bot) StartTrading(userID string, duration int) (string, error) {
@@ -52,12 +46,12 @@ func (b Bot) StartTrading(userID string, duration int) (string, error) {
 		return "", err
 	}
 
-	useCurrencyID, err := currencies.GetCurrencyIDByName("usd")
+	currencyOne, err := currencies.GetCurrencyIDByName("usd")
 	if err != nil {
 		log.Println("get currency by name err", err)
 	}
 
-	getCurrencyID, err := currencies.GetCurrencyIDByName("eth")
+	currencyTwo, err := currencies.GetCurrencyIDByName("eth")
 	if err != nil {
 		log.Println("get currency by name err", err)
 	}
@@ -66,10 +60,11 @@ func (b Bot) StartTrading(userID string, duration int) (string, error) {
 		err := b.startTrading(
 			userID,
 			tickerID,
-			useCurrencyID,
-			getCurrencyID,
+			currencyOne,
+			currencyTwo,
 		)
 		if err != nil {
+			log.Println("error:", err)
 			return err
 		}
 		return nil
@@ -80,48 +75,81 @@ func (b Bot) StartTrading(userID string, duration int) (string, error) {
 	return tickerID, nil
 }
 
-func (b Bot) startTrading(userID, tickerID, useCurrencyID, getCurrencyID string) error {
+func (b Bot) startTrading(userID, tickerID, currencyOne, currencyTwo string) error {
 
-	count := 0
+	buyCount := 0
+	sellCount := 0
 	for {
 		msg, err := b.Coinbase.GetTickerMessages(tickerID)
 		if err != nil {
 			return err
 		}
-		if count == 10 {
-			err = b.makeTrade(userID, useCurrencyID, getCurrencyID, msg)
+		price, _ := msg.GetPriceAsDecimal()
+
+		if buyCount == 10 {
+			err = b.makeTrade(TransactionParams{
+				UserID:         userID,
+				UseCurrencyID:  currencyOne,
+				GetCurrencyID:  currencyTwo,
+				TradeSessionID: tickerID,
+				Type:           "BUY",
+				Amount:         decimal.NewFromFloat32(1.25),
+				Price:          price,
+			})
 			if err != nil {
-				// if insufficient funds, we should stop bot.
+				b.StopTrading(userID, tickerID)
 			}
-			count = 0
+			buyCount = 0
 			continue
 		}
 
-		count++
+		if sellCount == 15 {
+			err = b.makeTrade(TransactionParams{
+				UserID:         userID,
+				UseCurrencyID:  currencyTwo,
+				GetCurrencyID:  currencyOne,
+				TradeSessionID: tickerID,
+				Type:           "SELL",
+				Amount:         decimal.NewFromFloat32(1.25),
+				Price:          price,
+			})
+			if err != nil {
+				b.StopTrading(userID, tickerID)
+			}
+			sellCount = 0
+			continue
+		}
+
+		sellCount++
+		buyCount++
 	}
 }
 
-func (b Bot) makeTrade(userID, useCurrencyID, getCurrencyID string, msg map[string]interface{}) error {
-	p, ok := msg["price"].(string)
-	if !ok {
-		return errors.New("unable to parse price")
-	}
+type TransactionParams struct {
+	UserID         string
+	UseCurrencyID  string
+	GetCurrencyID  string
+	TradeSessionID string
+	Type           string
+	Amount         decimal.Decimal
+	Price          decimal.Decimal
+}
 
-	price, err := decimal.NewFromString(p)
-	if err != nil {
-		return err
-	}
-
+func (b Bot) makeTrade(params TransactionParams) error {
 	id := uuid.New()
-	_, err = b.StorageClient.CreateTransaction(context.Background(), models.TransactionEntry{
-		ID:              id.String(),
-		UserID:          userID,
-		UseCurrencyID:   useCurrencyID,
-		GetCurrencyID:   getCurrencyID,
-		TransactionType: "BUY",
-		Amount:          decimal.NewFromInt(1),
-		Price:           price,
-	})
+	_, err := b.StorageClient.CreateTransaction(
+		context.Background(),
+		params.Type,
+		models.TransactionEntry{
+			ID:              id.String(),
+			UserID:          params.UserID,
+			UseCurrencyID:   params.UseCurrencyID,
+			GetCurrencyID:   params.GetCurrencyID,
+			TransactionType: params.Type,
+			Amount:          params.Amount,
+			Price:           params.Price,
+		},
+	)
 	if err != nil {
 		return err
 	}

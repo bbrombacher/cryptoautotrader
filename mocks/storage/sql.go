@@ -93,6 +93,21 @@ func (mr *MockSQLClientMockRecorder) InsertTransaction(ctx, entry interface{}) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertTransaction", reflect.TypeOf((*MockSQLClient)(nil).InsertTransaction), ctx, entry)
 }
 
+// InsertTransactionSessionMapEntry mocks base method.
+func (m *MockSQLClient) InsertTransactionSessionMapEntry(ctx context.Context, entry models.TransactionSessionMapEntry) (*models.TransactionSessionMapEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertTransactionSessionMapEntry", ctx, entry)
+	ret0, _ := ret[0].(*models.TransactionSessionMapEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InsertTransactionSessionMapEntry indicates an expected call of InsertTransactionSessionMapEntry.
+func (mr *MockSQLClientMockRecorder) InsertTransactionSessionMapEntry(ctx, entry interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertTransactionSessionMapEntry", reflect.TypeOf((*MockSQLClient)(nil).InsertTransactionSessionMapEntry), ctx, entry)
+}
+
 // InsertUser mocks base method.
 func (m *MockSQLClient) InsertUser(ctx context.Context, entry models.UserEntry) (*models.UserEntry, error) {
 	m.ctrl.T.Helper()
