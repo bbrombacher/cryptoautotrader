@@ -16,13 +16,10 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	v1Router := r.PathPrefix("/v1").Subrouter()
-
-	v1Router.HandleFunc("/balance", c.GetBulkBalance()).Methods(http.MethodGet)
-	v1Router.HandleFunc("/balance/{currency_id}", c.GetBalance()).Methods(http.MethodGet)
-	v1Router.HandleFunc("/balance", c.UpdateBalance()).Methods(http.MethodPatch)
-
-	return v1Router
+	r.HandleFunc("/v1/balance", c.GetBulkBalance()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/balance/{currency_id}", c.GetBalance()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/balance", c.UpdateBalance()).Methods(http.MethodPatch)
+	return r
 }
 
 func (c Controller) GetBulkBalance() http.HandlerFunc {

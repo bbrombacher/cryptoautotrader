@@ -19,14 +19,12 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	v1Router := r.PathPrefix("/v1").Subrouter()
-
-	v1Router.HandleFunc("/currencies/{id}", c.GetCurrency()).Methods(http.MethodGet)
-	v1Router.HandleFunc("/currencies", c.CreateCurrency()).Methods(http.MethodPost)
-	v1Router.HandleFunc("/currencies", c.GetCurrencies()).Methods(http.MethodGet)
-	v1Router.HandleFunc("/currencies/{id}", c.DeleteCurrency()).Methods(http.MethodDelete)
-	v1Router.HandleFunc("/currencies/{id}", c.UpdateCurrency()).Methods(http.MethodPatch)
-	return v1Router
+	r.HandleFunc("/v1/currencies/{id}", c.GetCurrency()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/currencies", c.CreateCurrency()).Methods(http.MethodPost)
+	r.HandleFunc("/v1/currencies", c.GetCurrencies()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/currencies/{id}", c.DeleteCurrency()).Methods(http.MethodDelete)
+	r.HandleFunc("/v1/currencies/{id}", c.UpdateCurrency()).Methods(http.MethodPatch)
+	return r
 }
 
 func (c Controller) GetCurrencies() http.HandlerFunc {

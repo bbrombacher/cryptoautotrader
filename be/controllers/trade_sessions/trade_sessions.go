@@ -22,14 +22,11 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	v1Router := r.PathPrefix("/v1").Subrouter()
-
-	v1Router.HandleFunc("/trade-sessions", c.GetTradeSessions()).Methods(http.MethodGet)
-	v1Router.HandleFunc("/trade-sessions/{id}", c.GetTradeSession()).Methods(http.MethodGet)
-	v1Router.HandleFunc("/trade-sessions/start", c.StartSession()).Methods(http.MethodPost)
-	v1Router.HandleFunc("/trade-sessions/stop/{trade-session-id}", c.StopSession()).Methods(http.MethodPost)
-
-	return v1Router
+	r.HandleFunc("/v1/trade-sessions", c.GetTradeSessions()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/trade-sessions/{id}", c.GetTradeSession()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/trade-sessions/start", c.StartSession()).Methods(http.MethodPost)
+	r.HandleFunc("/v1/trade-sessions/stop/{trade-session-id}", c.StopSession()).Methods(http.MethodPost)
+	return r
 }
 
 func (c Controller) GetTradeSessions() http.HandlerFunc {

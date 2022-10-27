@@ -19,13 +19,11 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	v1Router := r.PathPrefix("/v1").Subrouter()
-
-	v1Router.HandleFunc("/users/{id}", c.GetUser()).Methods(http.MethodGet)
-	v1Router.HandleFunc("/users", c.CreateUser()).Methods(http.MethodPost)
-	v1Router.HandleFunc("/users/{id}", c.DeleteUser()).Methods(http.MethodDelete)
-	v1Router.HandleFunc("/users/{id}", c.UpdateUser()).Methods(http.MethodPatch)
-	return v1Router
+	r.HandleFunc("/v1/users/{id}", c.GetUser()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/users", c.CreateUser()).Methods(http.MethodPost)
+	r.HandleFunc("/v1/users/{id}", c.DeleteUser()).Methods(http.MethodDelete)
+	r.HandleFunc("/v1/users/{id}", c.UpdateUser()).Methods(http.MethodPatch)
+	return r
 }
 
 func (c Controller) GetUser() http.HandlerFunc {
