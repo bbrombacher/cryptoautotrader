@@ -85,7 +85,6 @@ func (c Controller) GetTransactions() http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusOK)
-		w.Header().Add("Access-Control-Allow-Origin", "*")
 		json.NewEncoder(w).Encode(resp)
 	}
 }
