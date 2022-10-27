@@ -37,8 +37,12 @@ export default function Transactions() {
           <ul>
             {
                 data.transactions.map((transaction) => 
-                    <li key={transaction.id}>{transaction.id}</li>
-                    )
+                <li key={transaction.id}>
+                        Type: {transaction.transaction_type} 
+                        Amount: {transaction.amount} 
+                        Price: {transaction.price} 
+                </li>
+                )
               
             }
           </ul>
