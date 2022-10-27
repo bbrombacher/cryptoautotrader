@@ -100,6 +100,7 @@ func main() {
 func accessControlAllowOriginsMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "x-user-id")
 
 		log.Println("allowed", w.Header().Get("Access-Control-Allow-Methods"))
 		if r.Method == http.MethodOptions {
