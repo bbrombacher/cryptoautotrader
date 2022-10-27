@@ -98,6 +98,7 @@ func main() {
 
 func corsMW(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("SETTING ACCESS CONTROL MIDDLE WARE")
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		next.ServeHTTP(w, r)
 	})
