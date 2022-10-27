@@ -1,34 +1,18 @@
-import { useState, useEffect } from 'react'
+import useSWR from 'swr'
+
+const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
 export default function Transactions() {
+    const { data, error } = useSWR(
+        ['https://cryptoautotrader-production.up.railway.app/v1/transactions', 
+        {
+        headers: {
+           'x-user-id': 'd78964af-9dbe-4613-bf46-f3701bdd0494',
+        }
+    }], fetcher)
 
-    const [data, setData] = useState(null)
-    const [isLoading, setLoading] = useState(false)
-
-    useEffect(() => {
-        setLoading(true)
-        fetch('https://cryptoautotrader-production.up.railway.app/v1/transactions', {
-            headers: {
-               'x-user-id': 'd78964af-9dbe-4613-bf46-f3701bdd0494',
-            }
-        })
-            .then((res) => {
-                if (res.ok) {
-                    return res.json()
-                }
-                throw new Error('failed to retrieve data ')
-            })
-            .then((data) => {
-                setData(data)
-                setLoading(false)
-            })
-            .catch((error) => {
-                console.log('network failure ' + error)
-            })
-    }, [])
-     
-  
-   if (isLoading) return <p>Loading...</p>
+ 
+   if (error) return <p>could not fetch data</p>
    if (!data) return <p>No profile data</p>
 
     return (
