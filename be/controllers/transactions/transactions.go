@@ -75,7 +75,7 @@ func (c Controller) GetTransactions() http.HandlerFunc {
 			helpers.ErrResponse(w, http.StatusUnprocessableEntity, "error parsing request query parameters")
 			return
 		}
-
+		log.Println("GetTransactions: past parse")
 		params := transforms.BuildGetTransactionsParamsFromGetTransactionsRequest(req)
 		result, err := c.StorageClient.GetTransactions(r.Context(), params)
 		if err != nil {
