@@ -28,8 +28,10 @@ var coinbaseURL = "wss://ws-feed.pro.coinbase.com"
 func main() {
 
 	dbURL := localDB
+	port := ":8080"
 	if os.Getenv("ENV") == "server" {
 		dbURL = os.Getenv("DB_URL")
+		port = os.Getenv("PORT")
 	}
 
 	// set up db
@@ -80,6 +82,6 @@ func main() {
 	balanceController.Register(r)
 	transactionController.Register(r)
 	tradeSessionsController.Register(r)
-	port := os.Getenv("PORT")
+
 	http.ListenAndServe(port, r)
 }
