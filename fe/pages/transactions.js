@@ -36,10 +36,10 @@ export default function Transactions() {
             <h1> Your Transactions </h1>
           <ul>
             {
-                data.transactions.map((transaction) => (
-                    <li>{transaction.id}</li>
+                data.transactions.map((transaction) => 
+                    <li key={transaction.id}>{transaction.id}</li>
                     )
-                )
+              
             }
           </ul>
         </div>
