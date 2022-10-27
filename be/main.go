@@ -81,10 +81,25 @@ func main() {
 
 	// setup router
 	r := mux.NewRouter()
+
+	// register routes
 	userController.Register(r)
 	currencyController.Register(r)
 	balanceController.Register(r)
 	transactionController.Register(r)
 	tradeSessionsController.Register(r)
+
+	// set middleware
+	r.Use(corsMW)
+
+	// listen
 	http.ListenAndServe(":"+port, r)
+}
+
+func corsMW(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+
+		next.ServeHTTP(w, r)
+	})
 }
