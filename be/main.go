@@ -80,5 +80,6 @@ func main() {
 	balanceController.Register(r)
 	transactionController.Register(r)
 	tradeSessionsController.Register(r)
-	http.ListenAndServe(":8080", r)
+	port := os.Getenv("PORT")
+	http.ListenAndServe(port, r)
 }
