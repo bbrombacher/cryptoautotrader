@@ -9,6 +9,7 @@ import (
 	"bbrombacher/cryptoautotrader/be/transforms"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -30,6 +31,9 @@ func (c Controller) Register(r *mux.Router) *mux.Router {
 
 func (c Controller) GetUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		log.Println("cors?", w.Header().Get("Access-Control-Allow-Origin"))
+
 		vars := mux.Vars(r)
 		id := vars["id"]
 		if id == "" {
