@@ -6,6 +6,7 @@ import (
 	"bbrombacher/cryptoautotrader/be/transforms"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	transactionRequest "bbrombacher/cryptoautotrader/be/controllers/transactions/request"
@@ -65,6 +66,9 @@ func (c Controller) GetTransaction() http.HandlerFunc {
 
 func (c Controller) GetTransactions() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		log.Println("cors?", w.Header().Get("Access-Control-Allow-Origin"))
+
 		var req transactionRequest.GetTransactionsRequest
 
 		err := req.ParseRequest(r)
