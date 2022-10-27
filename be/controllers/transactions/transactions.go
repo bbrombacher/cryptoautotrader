@@ -66,8 +66,6 @@ func (c Controller) GetTransaction() http.HandlerFunc {
 
 func (c Controller) GetTransactions() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-
 		log.Println("GetTransactions: Access-Control-Allow-Origin: ", w.Header().Get("Access-Control-Allow-Origin"))
 
 		var req transactionRequest.GetTransactionsRequest
