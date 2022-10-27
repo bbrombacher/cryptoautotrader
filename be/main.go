@@ -34,6 +34,10 @@ func main() {
 		port = os.Getenv("PORT")
 	}
 
+	log.Println("ENV", os.Getenv("ENV"))
+	log.Println("DB_URL", dbURL)
+	log.Println("PORT", port)
+
 	// set up db
 	sqldb, err := goSql.Open(
 		"postgres",
@@ -82,6 +86,5 @@ func main() {
 	balanceController.Register(r)
 	transactionController.Register(r)
 	tradeSessionsController.Register(r)
-
 	http.ListenAndServe(port, r)
 }
