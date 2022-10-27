@@ -90,16 +90,8 @@ func main() {
 	tradeSessionsController.Register(r)
 
 	// set middleware
-	r.Use(corsMW)
+	r.Use(mux.CORSMethodMiddleware(r))
 
 	// listen
 	http.ListenAndServe(":"+port, r)
-}
-
-func corsMW(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("SETTING ACCESS CONTROL MIDDLE WARE")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		next.ServeHTTP(w, r)
-	})
 }

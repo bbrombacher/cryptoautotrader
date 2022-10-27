@@ -24,7 +24,7 @@ func (c Controller) Register(r *mux.Router) *mux.Router {
 	v1Router := r.PathPrefix("/v1").Subrouter()
 
 	v1Router.HandleFunc("/transactions/{id}", c.GetTransaction()).Methods(http.MethodGet)
-	v1Router.HandleFunc("/transactions", c.GetTransactions()).Methods(http.MethodGet)
+	v1Router.HandleFunc("/transactions", c.GetTransactions()).Methods(http.MethodGet, http.MethodOptions)
 
 	return v1Router
 }
@@ -67,7 +67,7 @@ func (c Controller) GetTransaction() http.HandlerFunc {
 func (c Controller) GetTransactions() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		log.Println("cors?", w.Header().Get("Access-Control-Allow-Origin"))
+		log.Println("GetTransactions: Access-Control-Allow-Origin: ", w.Header().Get("Access-Control-Allow-Origin"))
 
 		var req transactionRequest.GetTransactionsRequest
 
