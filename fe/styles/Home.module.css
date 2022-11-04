@@ -1,8 +1,42 @@
+
+.transactions {
+  border-style: solid;
+}
+
+.tradesessions {
+  border-style: solid;
+}
+
+.balance {
+  border-style: solid;
+}
+
+.transactionList {
+  border-style: solid;
+}
+
+.buttoncontainer{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+.bodycontainer {
+  border-style: solid;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
 .container {
   padding: 0 2rem;
+  border-style: solid;
 }
 
 .main {
+  border-style: solid;
   min-height: 100vh;
   padding: 4rem 0;
   flex: 1;
@@ -13,6 +47,7 @@
 }
 
 .footer {
+  border-style: solid;
   display: flex;
   flex: 1;
   padding: 2rem 0;
@@ -22,6 +57,7 @@
 }
 
 .footer a {
+  border-style: solid;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,6 +65,7 @@
 }
 
 .title a {
+  border-style: solid;
   color: #0070f3;
   text-decoration: none;
 }
@@ -36,10 +73,12 @@
 .title a:hover,
 .title a:focus,
 .title a:active {
+  border-style: solid;
   text-decoration: underline;
 }
 
 .title {
+  border-style: solid;
   margin: 0;
   line-height: 1.15;
   font-size: 4rem;
@@ -47,16 +86,19 @@
 
 .title,
 .description {
+  border-style: solid;
   text-align: center;
 }
 
 .description {
+  border-style: solid;
   margin: 4rem 0;
   line-height: 1.5;
   font-size: 1.5rem;
 }
 
 .code {
+  border-style: solid;
   background: #fafafa;
   border-radius: 5px;
   padding: 0.75rem;
@@ -66,6 +108,7 @@
 }
 
 .grid {
+  border-style: solid;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,6 +117,7 @@
 }
 
 .card {
+  border-style: solid;
   margin: 1rem;
   padding: 1.5rem;
   text-align: left;
@@ -88,22 +132,26 @@
 .card:hover,
 .card:focus,
 .card:active {
+  border-style: solid;
   color: #0070f3;
   border-color: #0070f3;
 }
 
 .card h2 {
+  border-style: solid;
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
 }
 
 .card p {
+  border-style: solid;
   margin: 0;
   font-size: 1.25rem;
   line-height: 1.5;
 }
 
 .logo {
+  border-style: solid;
   height: 1em;
   margin-left: 0.5rem;
 }
