@@ -89,6 +89,7 @@ func (s *SqlClient) SelectTradeSessions(ctx context.Context, params models.GetTr
 		From("trade_sessions").
 		Where(sq.GtOrEq{"cursor_id": params.Cursor}).
 		Where(sq.Eq{"user_id": params.UserID}).
+		OrderBy("cursor_id desc").
 		Limit(uint64(limit))
 	sqlQuery, args, err := selectQuery.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
