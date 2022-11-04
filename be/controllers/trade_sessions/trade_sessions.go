@@ -22,10 +22,10 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	r.HandleFunc("/v1/trade-sessions", c.GetTradeSessions()).Methods(http.MethodGet)
-	r.HandleFunc("/v1/trade-sessions/{id}", c.GetTradeSession()).Methods(http.MethodGet)
-	r.HandleFunc("/v1/trade-sessions/start", c.StartSession()).Methods(http.MethodPost)
-	r.HandleFunc("/v1/trade-sessions/stop/{trade-session-id}", c.StopSession()).Methods(http.MethodPost)
+	r.HandleFunc("/v1/trade-sessions", c.GetTradeSessions()).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/v1/trade-sessions/{id}", c.GetTradeSession()).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/v1/trade-sessions/start", c.StartSession()).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/v1/trade-sessions/stop/{trade-session-id}", c.StopSession()).Methods(http.MethodPost, http.MethodOptions)
 	return r
 }
 

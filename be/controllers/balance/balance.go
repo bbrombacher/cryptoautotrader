@@ -16,9 +16,9 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	r.HandleFunc("/v1/balance", c.GetBulkBalance()).Methods(http.MethodGet)
-	r.HandleFunc("/v1/balance/{currency_id}", c.GetBalance()).Methods(http.MethodGet)
-	r.HandleFunc("/v1/balance", c.UpdateBalance()).Methods(http.MethodPatch)
+	r.HandleFunc("/v1/balance", c.GetBulkBalance()).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/v1/balance/{currency_id}", c.GetBalance()).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/v1/balance", c.UpdateBalance()).Methods(http.MethodPatch, http.MethodOptions)
 	return r
 }
 

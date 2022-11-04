@@ -19,11 +19,11 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	r.HandleFunc("/v1/currencies/{id}", c.GetCurrency()).Methods(http.MethodGet)
-	r.HandleFunc("/v1/currencies", c.CreateCurrency()).Methods(http.MethodPost)
-	r.HandleFunc("/v1/currencies", c.GetCurrencies()).Methods(http.MethodGet)
-	r.HandleFunc("/v1/currencies/{id}", c.DeleteCurrency()).Methods(http.MethodDelete)
-	r.HandleFunc("/v1/currencies/{id}", c.UpdateCurrency()).Methods(http.MethodPatch)
+	r.HandleFunc("/v1/currencies/{id}", c.GetCurrency()).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/v1/currencies", c.CreateCurrency()).Methods(http.MethodPost, http.MethodOptions)
+	r.HandleFunc("/v1/currencies", c.GetCurrencies()).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/v1/currencies/{id}", c.DeleteCurrency()).Methods(http.MethodDelete, http.MethodOptions)
+	r.HandleFunc("/v1/currencies/{id}", c.UpdateCurrency()).Methods(http.MethodPatch, http.MethodOptions)
 	return r
 }
 

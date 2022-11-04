@@ -20,7 +20,7 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	r.HandleFunc("/v1/transactions/{id}", c.GetTransaction()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/transactions/{id}", c.GetTransaction()).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/v1/transactions", c.GetTransactions()).Methods(http.MethodGet, http.MethodOptions)
 	return r
 }
