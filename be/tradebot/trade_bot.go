@@ -159,7 +159,7 @@ func (b Bot) makeTrade(params TransactionParams) error {
 	id := uuid.New()
 	entry, err := b.StorageClient.CreateTransaction(
 		context.Background(),
-		params.Type,
+		params.TradeSessionID,
 		models.TransactionEntry{
 			ID:              id.String(),
 			UserID:          params.UserID,
