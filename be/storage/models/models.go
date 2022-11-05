@@ -160,9 +160,10 @@ func (e *TradeSessionEntry) RetrieveTagValues(tag string) (map[string]interface{
 }
 
 type GetTradeSessionsParams struct {
-	UserID string
-	Cursor int
-	Limit  int
+	UserID           string
+	Cursor           int
+	Limit            int
+	OrphanedSessions bool
 }
 
 type TransactionSessionMapEntry struct {

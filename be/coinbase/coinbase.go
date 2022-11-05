@@ -19,7 +19,7 @@ func New(socketURL string) *Client {
 	}
 }
 
-func (c Client) StartTickerFeed(params StartTickerParams) (string, error) {
+func (c Client) StartTickerFeed(tickerID string, params StartTickerParams) (string, error) {
 	var wsDialer ws.Dialer
 	wsConn, _, err := wsDialer.Dial(c.socketURL, nil)
 	if err != nil {
@@ -31,8 +31,12 @@ func (c Client) StartTickerFeed(params StartTickerParams) (string, error) {
 	}
 
 	id := uuid.New()
-	c.tickers[id.String()] = wsConn
-	return id.String(), nil
+	if tickerID == "" {
+		tickerID = id.String()
+	}
+
+	c.tickers[tickerID] = wsConn
+	return tickerID, nil
 }
 
 func (c Client) GetTickerMessages(id string) (TickerMsg, error) {

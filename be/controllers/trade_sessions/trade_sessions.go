@@ -95,7 +95,7 @@ func (c Controller) StartSession() http.HandlerFunc {
 			return
 		}
 
-		tradeID, err := c.Bot.StartTrading(userID, 30)
+		tradeID, err := c.Bot.StartTrading(userID, "", tradebot.StandardTradeDuration)
 		if err != nil {
 			helpers.ErrResponse(w, http.StatusInternalServerError, fmt.Sprintf("failed to start trading: %v", err.Error()))
 			return

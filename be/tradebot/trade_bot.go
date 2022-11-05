@@ -21,12 +21,39 @@ type Bot struct {
 	Tasks         *sync.Map
 }
 
-func (b Bot) StartTrading(userID string, duration int) (string, error) {
+const StandardTradeDuration int = 300
+
+func (b Bot) StartOrphanedTradeSessions() error {
+
+	sessions, err := b.StorageClient.GetTradeSessions(context.Background(), models.GetTradeSessionsParams{OrphanedSessions: true})
+	if err != nil {
+		return fmt.Errorf("failed to started orphaned trade sessions %w", err)
+	}
+
+	for _, session := range sessions {
+		if session.EndedAt == nil {
+			timeSinceStart := int(time.Since(*session.StartedAt).Seconds())
+			if timeSinceStart > StandardTradeDuration {
+				continue
+			}
+
+			duration := StandardTradeDuration - timeSinceStart
+			sessionID, err := b.StartTrading(session.UserID, session.ID, duration)
+			if err != nil {
+				return fmt.Errorf("failed to start orphaned trade session %s err: %w", sessionID, err)
+			}
+		}
+	}
+
+	return nil
+}
+
+func (b Bot) StartTrading(userID, tickerID string, duration int) (string, error) {
 
 	ctx := context.Background()
 
 	// start ticker feed
-	tickerID, err := b.Coinbase.StartTickerFeed(coinbase.StartTickerParams{
+	tickerID, err := b.Coinbase.StartTickerFeed(tickerID, coinbase.StartTickerParams{
 		Type:       "subscribe",
 		ProductIDs: []string{"ETH-USD"},
 		Channels: []coinbase.Channel{

@@ -88,9 +88,18 @@ func (s *SqlClient) SelectTradeSessions(ctx context.Context, params models.GetTr
 	selectQuery := sq.Select("*").
 		From("trade_sessions").
 		Where(sq.GtOrEq{"cursor_id": params.Cursor}).
-		Where(sq.Eq{"user_id": params.UserID}).
 		OrderBy("cursor_id desc").
 		Limit(uint64(limit))
+
+	if params.UserID != "" {
+		selectQuery = selectQuery.Where(sq.Eq{"user_id": params.UserID})
+	}
+
+	if params.OrphanedSessions {
+		selectQuery = selectQuery.Where(sq.Eq{"ended_at": nil})
+		// TODO: instead query by started_at is within some amount of time?
+	}
+
 	sqlQuery, args, err := selectQuery.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return nil, err

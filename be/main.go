@@ -52,6 +52,7 @@ func main() {
 		log.Println("could not start sql client: ", err.Error())
 	}
 	storageClient := storage.NewStorageClient(sqlClient)
+	taskMap := &sync.Map{}
 
 	// setup controllers
 	userController := users.Controller{
@@ -70,13 +71,20 @@ func main() {
 		StorageClient: storageClient,
 	}
 
+	tradeBot := tradebot.Bot{
+		Coinbase:      *coinbase.New(coinbaseURL),
+		StorageClient: storageClient,
+		Tasks:         taskMap,
+	}
+
+	err = tradeBot.StartOrphanedTradeSessions()
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
 	tradeSessionsController := trade_sessions.Controller{
 		StorageClient: storageClient,
-		Bot: tradebot.Bot{
-			Coinbase:      *coinbase.New(coinbaseURL),
-			StorageClient: storageClient,
-			Tasks:         &sync.Map{},
-		},
+		Bot:           tradeBot,
 	}
 
 	// setup router
