@@ -21,7 +21,8 @@ export default function Home() {
           </h1>
 
           <p className={styles.description}>
-            Get started by clicking Start Trading!
+            Get started by clicking Start Trading! <br></br>
+            *trade sessions will run for 30 seconds
           </p>
         </div>
 
