@@ -68,7 +68,6 @@ function startTrading(e) {
 
 function stopTrading() {
   console.log("stop clicked")
-  //84bd1d5f-0496-438d-8d6c-833d6cb17a00
   fetch('https://cryptoautotrader-production.up.railway.app/v1/trade-sessions/stop/a91aa853-8301-4db2-a38e-b3bdc56056f3', {
     method: 'POST',
     headers: {

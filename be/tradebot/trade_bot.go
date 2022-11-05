@@ -91,6 +91,10 @@ func (b Bot) StartTrading(userID string, duration int) (string, error) {
 	}
 
 	b.Tasks.Store(tickerID, task)
+	go Stop(duration, func() {
+		log.Println("stopFunc executed")
+		b.StopTrading(userID, tickerID)
+	})
 
 	return tickerID, nil
 }
