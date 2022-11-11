@@ -9,6 +9,7 @@ import (
 	"bbrombacher/cryptoautotrader/be/transforms"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -19,11 +20,37 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
+	r.HandleFunc("/v1/users/authenticate", c.Authenticate()).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/v1/users/{id}", c.GetUser()).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/v1/users", c.CreateUser()).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/v1/users/{id}", c.DeleteUser()).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/v1/users/{id}", c.UpdateUser()).Methods(http.MethodPatch, http.MethodOptions)
 	return r
+}
+
+func (c Controller) Authenticate() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req userRequest.PostLoginRequest
+
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			helpers.ErrResponse(w, http.StatusBadRequest, "could not unmarshal request body")
+			return
+		}
+
+		err = req.Validate()
+		if err != nil {
+			helpers.ErrResponse(w, http.StatusBadRequest, "request body fails validation")
+			return
+		}
+
+		resp := userResponse.LoginUserResponse{
+			ID: fmt.Sprintf("%s %s", req.First, req.Last),
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(resp)
+	}
 }
 
 func (c Controller) GetUser() http.HandlerFunc {

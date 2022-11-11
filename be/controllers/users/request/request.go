@@ -23,6 +23,19 @@ func init() {
 	decoder.IgnoreUnknownKeys(true)
 }
 
+type PostLoginRequest struct {
+	First string `json:"first" validate:"required"`
+	Last  string `json:"last" validate:"required"`
+}
+
+func (r *PostLoginRequest) Validate() error {
+	if err := validate.Struct(r); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type PostUserRequest struct {
 	FirstName string `json:"first_name" validate:"required"`
 	LastName  string `json:"last_name" validate:"required"`
