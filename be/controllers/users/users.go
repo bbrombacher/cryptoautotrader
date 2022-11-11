@@ -50,6 +50,7 @@ func (c Controller) Authenticate() http.HandlerFunc {
 				"error": "invalid user",
 			}
 			json.NewEncoder(w).Encode(resp)
+			return
 		}
 
 		resp := userResponse.LoginUserResponse{
