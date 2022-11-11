@@ -16,9 +16,7 @@ export default function TradeSessions() {
    if (error) return <p>could not fetch trade sessions</p>
    if (!data) return <p>no transaction data</p>
 
-
-
-    return (
+   return (
         <div  className={styles.tradesessions}>
             <h1> Your Trade Sessions </h1>
           <ul>
