@@ -44,11 +44,19 @@ func (c Controller) Authenticate() http.HandlerFunc {
 			return
 		}
 
+		if req.First != "brandon" || req.Last != "brombacher" {
+			w.WriteHeader(http.StatusNotFound)
+			resp := map[string]interface{}{
+				"error": "invalid user",
+			}
+			json.NewEncoder(w).Encode(resp)
+		}
+
 		resp := userResponse.LoginUserResponse{
 			ID: fmt.Sprintf("%s %s", req.First, req.Last),
 		}
 
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(resp)
 	}
 }
