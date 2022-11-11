@@ -137,7 +137,7 @@ func (b Bot) startTrading(userID, tickerID, currencyOne, currencyTwo string) err
 		}
 		price, _ := msg.GetPriceAsDecimal()
 
-		if buyCount == 10 {
+		if buyCount == 15 {
 			err = b.makeTrade(TransactionParams{
 				UserID:         userID,
 				UseCurrencyID:  currencyOne,
@@ -154,7 +154,7 @@ func (b Bot) startTrading(userID, tickerID, currencyOne, currencyTwo string) err
 			continue
 		}
 
-		if sellCount == 15 {
+		if sellCount == 5 {
 			err = b.makeTrade(TransactionParams{
 				UserID:         userID,
 				UseCurrencyID:  currencyTwo,
