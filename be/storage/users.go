@@ -5,8 +5,8 @@ import (
 	"context"
 )
 
-func (s *StorageClient) GetUser(ctx context.Context, id string) (*models.UserEntry, error) {
-	entry, err := s.SqlClient.SelectUser(ctx, id)
+func (s *StorageClient) GetUser(ctx context.Context, params models.GetUserParams) (*models.UserEntry, error) {
+	entry, err := s.SqlClient.SelectUser(ctx, params)
 	if err != nil {
 		return nil, err
 	}

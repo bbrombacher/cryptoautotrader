@@ -23,7 +23,7 @@ func TestStorageClient_GetUser(t *testing.T) {
 
 	// make storage client and execute test
 	storageClient := storage.NewStorageClient(sqlClient)
-	result, err := storageClient.GetUser(context.Background(), "one")
+	result, err := storageClient.GetUser(context.Background(), models.GetUserParams{ID: "one"})
 	assert.Nil(t, err)
 	assert.Equal(t, "brandon", result.FirstName)
 	assert.Equal(t, "brombacher", result.LastName)

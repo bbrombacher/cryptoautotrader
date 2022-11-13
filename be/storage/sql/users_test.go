@@ -31,7 +31,7 @@ func TestSQLClient_SelectUser(t *testing.T) {
 	sqlClient, err := sql.NewSQLClient(context.Background(), validDb)
 	assert.Nil(t, err)
 
-	result, err := sqlClient.SelectUser(context.Background(), "one")
+	result, err := sqlClient.SelectUser(context.Background(), models.GetUserParams{ID: "one"})
 	assert.Nil(t, err)
 
 	assert.Equal(t, "brandon", result.FirstName)

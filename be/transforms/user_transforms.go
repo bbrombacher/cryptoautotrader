@@ -6,6 +6,14 @@ import (
 	storageModels "bbrombacher/cryptoautotrader/be/storage/models"
 )
 
+func BuildGetUserParamsFromRequest(id, firstName, lastName string) storageModels.GetUserParams {
+	return storageModels.GetUserParams{
+		ID:        id,
+		FirstName: firstName,
+		LastName:  lastName,
+	}
+}
+
 func BuildStartTickerParams(productIDs []string) coinbase.StartTickerParams {
 	return coinbase.StartTickerParams{
 		Type:       "subscribe",

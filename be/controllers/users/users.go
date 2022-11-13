@@ -9,7 +9,6 @@ import (
 	"bbrombacher/cryptoautotrader/be/transforms"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -20,59 +19,25 @@ type Controller struct {
 }
 
 func (c Controller) Register(r *mux.Router) *mux.Router {
-	r.HandleFunc("/v1/users/authenticate", c.Authenticate()).Methods(http.MethodPost, http.MethodOptions)
-	r.HandleFunc("/v1/users/{id}", c.GetUser()).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/v1/users", c.GetUser()).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/v1/users", c.CreateUser()).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/v1/users/{id}", c.DeleteUser()).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/v1/users/{id}", c.UpdateUser()).Methods(http.MethodPatch, http.MethodOptions)
 	return r
 }
 
-func (c Controller) Authenticate() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req userRequest.PostLoginRequest
-
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			helpers.ErrResponse(w, http.StatusBadRequest, "could not unmarshal request body")
-			return
-		}
-
-		err = req.Validate()
-		if err != nil {
-			helpers.ErrResponse(w, http.StatusBadRequest, "request body fails validation")
-			return
-		}
-
-		if req.First != "brandon" || req.Last != "brombacher" {
-			w.WriteHeader(http.StatusNotFound)
-			resp := map[string]interface{}{
-				"error": "invalid user",
-			}
-			json.NewEncoder(w).Encode(resp)
-			return
-		}
-
-		resp := userResponse.LoginUserResponse{
-			ID: fmt.Sprintf("%s %s", req.First, req.Last),
-		}
-
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(resp)
-	}
-}
-
 func (c Controller) GetUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
-		vars := mux.Vars(r)
-		id := vars["id"]
-		if id == "" {
-			helpers.ErrResponse(w, http.StatusBadRequest, "you must provide a user id")
+		id := r.URL.Query().Get("id")
+		firstName := r.URL.Query().Get("first_name")
+		lastName := r.URL.Query().Get("last_name")
+		if id != "" && (firstName != "" || lastName != "") {
+			helpers.ErrResponse(w, http.StatusBadRequest, "you must request with either id or first_name and last_name")
 			return
 		}
 
-		userEntry, err := c.StorageClient.GetUser(r.Context(), id)
+		params := transforms.BuildGetUserParamsFromRequest(id, firstName, lastName)
+		userEntry, err := c.StorageClient.GetUser(r.Context(), params)
 		if err != nil {
 			if errors.Is(err, storageModels.ErrUserDoesNotExist) {
 				helpers.ErrResponse(w, http.StatusNotFound, "could not find user")

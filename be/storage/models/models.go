@@ -74,6 +74,12 @@ func (c Currencies) GetCurrencyIDByName(name string) (string, error) {
 	return "", fmt.Errorf("could not find currency with name %s", name)
 }
 
+type GetUserParams struct {
+	ID        string
+	FirstName string
+	LastName  string
+}
+
 type GetCurrenciesParams struct {
 	Cursor int
 	Limit  int

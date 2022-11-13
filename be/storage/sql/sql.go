@@ -12,7 +12,7 @@ import (
 )
 
 type SQLClient interface {
-	SelectUser(ctx context.Context, id string) (*models.UserEntry, error)
+	SelectUser(ctx context.Context, params models.GetUserParams) (*models.UserEntry, error)
 	InsertUser(ctx context.Context, entry models.UserEntry) (*models.UserEntry, error)
 	UpdateUser(ctx context.Context, entry models.UserEntry, updateColumns []string) (*models.UserEntry, error)
 	DeleteUser(ctx context.Context, id string) error

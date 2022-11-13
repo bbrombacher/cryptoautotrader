@@ -244,18 +244,18 @@ func (mr *MockSQLClientMockRecorder) SelectTransactions(ctx, params interface{})
 }
 
 // SelectUser mocks base method.
-func (m *MockSQLClient) SelectUser(ctx context.Context, id string) (*models.UserEntry, error) {
+func (m *MockSQLClient) SelectUser(ctx context.Context, params models.GetUserParams) (*models.UserEntry, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectUser", ctx, id)
+	ret := m.ctrl.Call(m, "SelectUser", ctx, params)
 	ret0, _ := ret[0].(*models.UserEntry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SelectUser indicates an expected call of SelectUser.
-func (mr *MockSQLClientMockRecorder) SelectUser(ctx, id interface{}) *gomock.Call {
+func (mr *MockSQLClientMockRecorder) SelectUser(ctx, params interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectUser", reflect.TypeOf((*MockSQLClient)(nil).SelectUser), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectUser", reflect.TypeOf((*MockSQLClient)(nil).SelectUser), ctx, params)
 }
 
 // UpdateCurrency mocks base method.

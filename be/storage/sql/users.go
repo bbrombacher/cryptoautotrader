@@ -10,11 +10,17 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
-func (s *SqlClient) SelectUser(ctx context.Context, id string) (*models.UserEntry, error) {
+func (s *SqlClient) SelectUser(ctx context.Context, params models.GetUserParams) (*models.UserEntry, error) {
 
-	selectQuery := sq.Select("*").
-		From("users").
-		Where(sq.Eq{"id": id})
+	selectQuery := sq.Select("*").From("users")
+
+	if params.ID != "" {
+		selectQuery = selectQuery.Where(sq.Eq{"id": params.ID})
+	} else if params.FirstName != "" && params.LastName != "" {
+		selectQuery = selectQuery.Where(sq.Eq{"first_name": params.FirstName}).
+			Where(sq.Eq{"last_name": params.LastName})
+	}
+
 	sqlQuery, args, err := selectQuery.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return nil, err
