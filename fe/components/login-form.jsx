@@ -17,22 +17,16 @@ export default function LoginForm() {
         last: event.target.last.value,
       }
 
-      // Send the data to the server in JSON format.
-      const JSONdata = JSON.stringify(data)
-
       // API endpoint where we send form data.
-      const endpoint = 'https://cryptoautotrader-production.up.railway.app/v1/users/authenticate'
+      const endpoint = 'https://cryptoautotrader-production.up.railway.app/v1/users?' + new URLSearchParams({
+        first_name: data.first,
+        last_name: data.last
+      }).toString()
 
       // Form the request for sending data to the server.
       const options = {
         // The method is POST because we are sending data.
-        method: 'POST',
-        // Tell the server we're sending JSON.
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // Body of the request is the JSON data we created above.
-        body: JSONdata,
+        method: 'GET',
       }
 
       // Send the form data to our forms API on Vercel and get a response.
@@ -46,8 +40,8 @@ export default function LoginForm() {
           }
         })
         .then((data) => {
-            setUserID(data.id)
-            console.log('setting user id ', data.id)
+            setUserID(data.user.id)
+            console.log('setting user id ', data.user.id)
             Router.push('/dashboard')
         }).catch((response) => {
             console.log("catch", response.status, response.statusText)

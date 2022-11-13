@@ -6,8 +6,13 @@ import Currencies from '../../components/currencies'
 import TradeSessions from '../../components/tradesessions'
 import { useGlobalContext } from '../../contexts';
 
+
+
 export default function Home() {
-  const { userID, setUserID } = useGlobalContext();
+  const { 
+    userID, setUserID, 
+    tradeSessionID, setTradeSessionID
+   } = useGlobalContext();
   console.log('dashboard: current user id ' + userID)
 
   return (
@@ -27,8 +32,8 @@ export default function Home() {
 
       <main className={styles.main}>
         <div className={styles.buttoncontainer}>
-          <button onClick={startTrading}> start trading! </button>
-          <button onClick={stopTrading}> stop trading! </button>
+          <button onClick={() => { startTrading(userID, setTradeSessionID) }}> start trading! </button>
+          <button onClick={() => { stopTrading(userID, tradeSessionID) }}> stop trading! </button>
         </div>
 
         <div className={styles.bodycontainer}>
@@ -39,39 +44,32 @@ export default function Home() {
       </main>
 
       <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
       </footer>
     </div>
   )
 }
 
-function startTrading(e) {
-  console.log("start clicked" + e)
+function startTrading(userID, setTradeSessionIDFunc) {
+  console.log("start clicked " + userID)
   fetch('https://cryptoautotrader-production.up.railway.app/v1/trade-sessions/start', {
     method: 'POST',
     headers: {
-      'x-user-id': 'd78964af-9dbe-4613-bf46-f3701bdd0494'
+      'x-user-id': userID
     }
   }) 
     .then((response) => response.json())
-    .then((data) => console.log(data))
+    .then((data) => {
+      console.log(data)
+      setTradeSessionIDFunc(data.trade_id)
+    })
 }
 
-function stopTrading() {
-  console.log("stop clicked")
-  fetch('https://cryptoautotrader-production.up.railway.app/v1/trade-sessions/stop/a91aa853-8301-4db2-a38e-b3bdc56056f3', {
+function stopTrading(userID, tradeSessionID) {
+  console.log("stop clicked " + userID)
+  fetch('https://cryptoautotrader-production.up.railway.app/v1/trade-sessions/stop/' + tradeSessionID, {
     method: 'POST',
     headers: {
-      'x-user-id': 'd78964af-9dbe-4613-bf46-f3701bdd0494'
+      'x-user-id': userID
     }
   }) 
     .then((response) => response.json())
